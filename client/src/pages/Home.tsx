@@ -1,134 +1,132 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
-  ArrowDownRight,
   ArrowRight,
-  BadgeCheck,
+  ArrowUpRight,
   CalendarDays,
   Check,
   ChevronRight,
-  CircleDollarSign,
+  CircleUserRound,
   Clock3,
   Crown,
-  Gift,
+  Disc3,
+  Flame,
   Heart,
   MapPin,
   Menu,
   Minus,
-  ParkingCircle,
   Plus,
-  ReceiptText,
+  Send,
   ShieldCheck,
   Sparkles,
   Ticket,
-  TrendingUp,
   UsersRound,
   WalletCards,
   X,
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 
-type Venue = {
+const visuals = {
+  hero: "/manus-storage/clout-hero_2a83a157.jpg",
+  rooftop: "/manus-storage/clout-rooftop_bf42d500.jpg",
+  social: "/manus-storage/clout-social_1244bf99.jpg",
+};
+
+type Scene = {
   id: string;
   name: string;
-  eyebrow: string;
-  category: string;
   neighborhood: string;
-  imageClass: string;
-  availability: string;
+  energy: string;
+  time: string;
+  image: string;
+  gradient: string;
   services: { name: string; detail: string; price: number }[];
 };
 
-const venues: Venue[] = [
+const scenes: Scene[] = [
   {
     id: "noir-social-houston",
     name: "Noir Social House",
-    eyebrow: "Signature Nightlife",
-    category: "Social club",
     neighborhood: "Montrose · Houston",
-    imageClass: "venue-noir",
-    availability: "Tables available tonight",
+    energy: "The main character energy",
+    time: "Doors 9 PM",
+    image: visuals.hero,
+    gradient: "linear-gradient(135deg, #11061f, #260f67 48%, #1554e8)",
     services: [
       { name: "The Velvet Table", detail: "Priority entry · dedicated host", price: 250 },
-      { name: "Noir Lounge", detail: "Up to 4 guests · bottle presentation", price: 475 },
-      { name: "The Gallery", detail: "Up to 8 guests · premium placement", price: 850 },
+      { name: "The Spotlight", detail: "Up to 4 · bottle presentation", price: 475 },
+      { name: "The Main Floor", detail: "Up to 8 · premium placement", price: 850 },
     ],
   },
   {
-    id: "aurelia-house",
-    name: "Aurelia House",
-    eyebrow: "Dinner & After Dark",
-    category: "Restaurant lounge",
+    id: "violet-room",
+    name: "The Violet Room",
     neighborhood: "River Oaks · Houston",
-    imageClass: "venue-aurelia",
-    availability: "Dining reservations open",
+    energy: "Late dinner, louder after",
+    time: "Dinner 8 PM",
+    image: visuals.rooftop,
+    gradient: "linear-gradient(135deg, #0d0925, #641fcf 55%, #f06fe7)",
     services: [
-      { name: "Dinner for Two", detail: "Chef counter · priority seating", price: 160 },
-      { name: "Private Supper Club", detail: "Up to 6 guests · tasting menu", price: 420 },
-      { name: "The Conservatory", detail: "Up to 12 guests · host service", price: 900 },
+      { name: "The Dinner Edit", detail: "Chef counter · priority seating", price: 160 },
+      { name: "Violet Booth", detail: "Up to 6 · tasting menu", price: 420 },
+      { name: "The Private Room", detail: "Up to 12 · host service", price: 900 },
     ],
   },
   {
-    id: "marea-rooftop",
-    name: "Marea Rooftop",
-    eyebrow: "Skyline Experiences",
-    category: "Rooftop lounge",
+    id: "skyline-social",
+    name: "Afterglow Rooftop",
     neighborhood: "Downtown · Houston",
-    imageClass: "venue-marea",
-    availability: "Golden hour bookings open",
+    energy: "The city looks better from here",
+    time: "Sunset 7 PM",
+    image: visuals.social,
+    gradient: "linear-gradient(135deg, #070b21, #123e9a 50%, #8e2acb)",
     services: [
-      { name: "Sunset Booth", detail: "Up to 4 guests · skyline view", price: 220 },
-      { name: "Sky Table", detail: "Up to 6 guests · arrival escort", price: 560 },
-      { name: "The Horizon", detail: "Up to 10 guests · private service", price: 1100 },
+      { name: "The Sunset Booth", detail: "Up to 4 · skyline view", price: 220 },
+      { name: "Sky Table", detail: "Up to 6 · arrival escort", price: 560 },
+      { name: "The Horizon", detail: "Up to 10 · private service", price: 1100 },
     ],
   },
-];
-
-const membershipPlans = [
-  { name: "Social", price: "$0", detail: "Explore locations and pay as you go.", benefit: "Member access" },
-  { name: "Clout", price: "$99", detail: "Priority access and $25 booking credit.", benefit: "$25 applied" },
-  { name: "Mega Clout", price: "$299", detail: "Concierge handling and $75 booking credit.", benefit: "$75 applied" },
 ];
 
 const addOns = [
-  { id: "valet", label: "Valet arrival", detail: "Reserved curbside welcome", price: 35, icon: ParkingCircle },
-  { id: "concierge", label: "Concierge note", detail: "Celebrate it your way", price: 25, icon: Sparkles },
-  { id: "arrival", label: "Priority arrival", detail: "Fast-lane guest check-in", price: 40, icon: ShieldCheck },
+  { id: "valet", label: "Valet arrival", detail: "Curbside, no pause", price: 35, icon: Ticket },
+  { id: "friends", label: "Bring the group", detail: "Fast lane for your crew", price: 25, icon: UsersRound },
+  { id: "celebrate", label: "Make it a moment", detail: "Host note + celebration cue", price: 40, icon: Sparkles },
+];
+
+const membershipPlans = [
+  { name: "Social", price: "$0", credit: 0, detail: "Explore the city on your terms." },
+  { name: "Clout", price: "$99", credit: 25, detail: "Skip the friction. Catch the energy." },
+  { name: "Mega Clout", price: "$299", credit: 75, detail: "Your night, handled before it starts." },
 ];
 
 const money = (amount: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(amount);
 
-function Wordmark({ dark = false }: { dark?: boolean }) {
-  return (
-    <div className={`wordmark ${dark ? "wordmark-dark" : ""}`} aria-label="Clout">
-      <span className="wordmark-mark">C</span>
-      <span className="wordmark-type">CLOUT</span>
-    </div>
-  );
+function CloutMark() {
+  return <span className="clout-mark">C</span>;
 }
 
-function VenueVisual({ venue, compact = false }: { venue: Venue; compact?: boolean }) {
-  return (
-    <div className={`venue-visual ${venue.imageClass} ${compact ? "venue-visual-compact" : ""}`}>
-      <div className="venue-lights" />
-      <div className="venue-glow" />
-      <div className="venue-architecture">
-        <span /><span /><span /><span /><span />
-      </div>
-      {!compact && <div className="venue-corner-mark">C</div>}
-    </div>
-  );
+function Wordmark() {
+  return <div className="wordmark-night"><CloutMark /><span>CLOUT</span></div>;
+}
+
+function Poster({ scene, className = "" }: { scene: Scene; className?: string }) {
+  return <div className={`night-poster ${className}`} style={{ background: scene.gradient }}><img src={scene.image} alt="" /><div className="poster-shade" /><div className="poster-glow" /></div>;
+}
+
+function AvatarStack() {
+  return <div className="avatar-stack" aria-label="Friends going out"><span>J</span><span>M</span><span>A</span><span>+</span></div>;
 }
 
 export default function Home() {
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [selectedVenue, setSelectedVenue] = useState<Venue>(venues[0]);
+  const [selectedScene, setSelectedScene] = useState<Scene>(scenes[0]);
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
   const [membership, setMembership] = useState("Clout");
   const [extras, setExtras] = useState<string[]>(["valet"]);
@@ -137,30 +135,35 @@ export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const owner = trpc.owner.snapshot.useQuery(undefined, { retry: false });
 
-  const service = selectedVenue.services[selectedServiceIndex] ?? selectedVenue.services[0];
+  const service = selectedScene.services[selectedServiceIndex] ?? selectedScene.services[0];
   const selectedExtras = addOns.filter(addOn => extras.includes(addOn.id));
   const extrasTotal = selectedExtras.reduce((total, addOn) => total + addOn.price, 0);
-  const membershipCredit = membership === "Mega Clout" ? 75 : membership === "Clout" ? 25 : 0;
+  const credit = membershipPlans.find(plan => plan.name === membership)?.credit ?? 0;
   const subtotal = service.price + extrasTotal;
-  const total = Math.max(subtotal - membershipCredit, 0);
+  const total = Math.max(0, subtotal - credit);
 
   const createReservation = trpc.reservation.create.useMutation({
     onSuccess: data => {
       setConfirmation(data.confirmationCode);
       owner.refetch();
     },
-    onError: () => toast.error("We couldn’t secure that reservation. Please try again."),
+    onError: () => toast.error("We couldn’t lock in that reservation. Try it again."),
   });
 
-  function openBooking(venue = selectedVenue) {
-    setSelectedVenue(venue);
+  function scrollTo(id: string) {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setMobileOpen(false);
+  }
+
+  function openBooking(scene = selectedScene) {
+    setSelectedScene(scene);
     setSelectedServiceIndex(0);
     setConfirmation(null);
     setBookingOpen(true);
   }
 
-  function changeVenue(venue: Venue) {
-    setSelectedVenue(venue);
+  function chooseScene(scene: Scene) {
+    setSelectedScene(scene);
     setSelectedServiceIndex(0);
   }
 
@@ -168,215 +171,64 @@ export default function Home() {
     setExtras(current => current.includes(id) ? current.filter(item => item !== id) : [...current, id]);
   }
 
-  function scrollTo(id: string) {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setMobileOpen(false);
-  }
-
-  const dashboardRevenue = useMemo(() => (owner.data?.revenueCents ?? 0) / 100, [owner.data?.revenueCents]);
-
   return (
-    <main className="min-h-screen overflow-hidden bg-[#f6f2eb] text-[#17130e]">
-      <section className="hero-section" id="home">
-        <nav className="container hero-nav" aria-label="Main navigation">
+    <main className="night-app">
+      <section className="night-hero" id="home">
+        <nav className="night-nav container" aria-label="Main navigation">
           <button className="brand-button" onClick={() => scrollTo("home")}><Wordmark /></button>
-          <div className="desktop-nav">
-            <button onClick={() => scrollTo("discover")}>Discover</button>
-            <button onClick={() => scrollTo("memberships")}>Memberships</button>
-            <button onClick={() => scrollTo("owner")}>For operators</button>
-          </div>
-          <div className="nav-actions">
-            <button className="nav-login" onClick={() => toast.info("Guest sign-in is ready for your Clout account.")}>Sign in</button>
-            <Button className="nav-join" onClick={() => openBooking()}>
-              Plan tonight <ArrowRight size={15} />
-            </Button>
-          </div>
-          <button className="mobile-menu-button" aria-label="Open navigation" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="night-nav-links"><button onClick={() => scrollTo("tonight")}>Tonight</button><button onClick={() => scrollTo("social")}>Social</button><button onClick={() => scrollTo("membership")}>Membership</button><button onClick={() => scrollTo("operators")}>For venues</button></div>
+          <div className="night-nav-actions"><button onClick={() => toast.info("Sign-in is ready for your Clout account.")}>Sign in</button><Button onClick={() => openBooking()}><span>Get on the list</span><ArrowRight size={15} /></Button></div>
+          <button className="night-mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Open navigation">{mobileOpen ? <X size={22} /> : <Menu size={22} />}</button>
         </nav>
+        {mobileOpen && <div className="night-mobile-nav"><button onClick={() => scrollTo("tonight")}>Tonight</button><button onClick={() => scrollTo("social")}>Social</button><button onClick={() => scrollTo("membership")}>Membership</button><button onClick={() => scrollTo("operators")}>For venues</button><Button onClick={() => openBooking()}>Get on the list <ArrowRight size={15} /></Button></div>}
 
-        {mobileOpen && (
-          <div className="mobile-nav container">
-            <button onClick={() => scrollTo("discover")}>Discover</button>
-            <button onClick={() => scrollTo("memberships")}>Memberships</button>
-            <button onClick={() => scrollTo("owner")}>For operators</button>
-            <Button onClick={() => openBooking()}>Plan tonight <ArrowRight size={15} /></Button>
+        <div className="container night-hero-grid">
+          <div className="night-hero-copy">
+            <div className="electric-label"><span className="live-dot" /> Houston is glowing tonight</div>
+            <h1>Make the<br /><em>night yours.</em></h1>
+            <p>Find the people, places and little moments worth dressing up for. Clout gets you from “what’s the move?” to right where you belong.</p>
+            <div className="hero-actions"><Button size="lg" onClick={() => openBooking()}><Zap size={16} fill="currentColor" /> Claim your spot <ArrowRight size={16} /></Button><button onClick={() => scrollTo("tonight")}>See the pulse <ChevronRight size={17} /></button></div>
+            <div className="hero-social-proof"><AvatarStack /><span><b>1,240+ people</b><small>already making plans</small></span></div>
           </div>
-        )}
-
-        <div className="container hero-grid">
-          <div className="hero-copy">
-            <div className="eyebrow"><span className="pulse-dot" /> The hospitality layer for your night</div>
-            <h1>Your night,<br /><em>recognized.</em></h1>
-            <p className="hero-subtitle">Clout turns every reservation, arrival and upgrade into a more personal experience—before you ever walk through the door.</p>
-            <div className="hero-ctas">
-              <Button size="lg" className="hero-primary" onClick={() => openBooking()}>
-                Reserve an experience <ArrowRight size={17} />
-              </Button>
-              <button className="hero-text-button" onClick={() => scrollTo("discover")}>
-                Explore locations <ArrowDownRight size={17} />
-              </button>
-            </div>
-            <div className="hero-proof">
-              <div className="proof-stack"><span>J</span><span>R</span><span>M</span><span>+</span></div>
-              <p><b>Guest-first hospitality.</b><br />One profile across every touchpoint.</p>
-            </div>
-          </div>
-
-          <div className="hero-art" aria-label="A premium Clout experience preview">
-            <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" /><div className="hero-orbit orbit-three" />
-            <div className="hero-sphere" />
-            <div className="hero-spotlight" />
-            <div className="hero-card hero-reservation-card">
-              <div className="card-header-row"><span className="mini-logo">C</span><span className="card-kicker">TONIGHT AT 9:30</span><Badge>Confirmed</Badge></div>
-              <h3>Welcome back,<br />Jordan.</h3>
-              <div className="reservation-line"><MapPin size={15} /><span>Noir Social House</span></div>
-              <div className="card-divider" />
-              <div className="reservation-meta"><span>4 guests</span><span>Valet included</span></div>
-            </div>
-            <div className="hero-card hero-benefit-card"><Crown size={16} /><span><b>Mega Clout</b><small>Your benefits are ready</small></span></div>
-            <div className="hero-card hero-rating-card"><div className="rating-orb">4.9</div><span>Every detail,<br /><b>anticipated.</b></span></div>
-            <div className="hero-date-stamp"><span>SEP</span><strong>26</strong><small>FRI</small></div>
+          <div className="hero-visual">
+            <div className="hero-aura aura-one" /><div className="hero-aura aura-two" /><div className="hero-grid-lines" />
+            <div className="hero-image-frame"><img src={visuals.hero} alt="Friends enjoying a refined nightlife experience" /><div className="hero-image-overlay" /></div>
+            <div className="floating-pass"><div><CloutMark /><span>ONE NIGHT ONLY</span></div><b>Violet<br />Saturdays</b><small>NOIR SOCIAL · 9 PM</small><i><Ticket size={14} /> Reserved</i></div>
+            <div className="floating-status"><span className="status-light" /><div><b>18 friends going</b><small>Tap in before 10:30</small></div></div>
+            <div className="floating-reaction"><Heart size={15} fill="currentColor" /><span>2.4K</span></div>
           </div>
         </div>
-        <div className="container hero-strip">
-          <span>One profile. Any location.</span><i /><span>Reservations, VIP, valet & wallet.</span><i /><span>Built for the way you go out.</span>
+        <div className="night-marquee"><span>NO LONG LINES</span><i>✦</i><span>THE RIGHT PEOPLE</span><i>✦</i><span>YOUR NIGHT, ONE TAP AWAY</span><i>✦</i><span>NO LONG LINES</span><i>✦</i><span>THE RIGHT PEOPLE</span></div>
+      </section>
+
+      <section className="tonight-section" id="tonight">
+        <div className="container section-topline"><div><p className="electric-label"><Disc3 size={13} /> What’s moving</p><h2>The city has<br /><em>plans for you.</em></h2></div><button className="filter-button" onClick={() => toast.info("Your personalized city filter is coming next.")}>Houston, TX <ChevronRight size={14} /></button></div>
+        <div className="container scene-grid">
+          {scenes.map((scene, index) => <article key={scene.id} className={`scene-card ${index === 0 ? "scene-card-main" : ""}`}><Poster scene={scene} /><div className="scene-card-body"><div className="scene-meta"><span>{scene.time}</span><span className="scene-live"><i /> Live energy</span></div><h3>{scene.name}</h3><p>{scene.energy}</p><div className="scene-footer"><span><MapPin size={13} /> {scene.neighborhood}</span><button onClick={() => openBooking(scene)}>Reserve <ArrowUpRight size={16} /></button></div></div></article>)}
         </div>
       </section>
 
-      <section className="intro-section container">
-        <div className="section-number">01</div>
-        <div className="intro-headline"><p className="eyebrow">THE CLOUT DIFFERENCE</p><h2>Beyond a reservation.<br /><em>A relationship in motion.</em></h2></div>
-        <p className="intro-body">Your preferences, benefits and plans should not restart at every door. Clout gives exceptional hospitality a shared memory—so every arrival can feel considered.</p>
-      </section>
-
-      <section className="experience-section" id="discover">
-        <div className="container section-heading-row">
-          <div><p className="eyebrow">CURATED FOR YOU</p><h2>Pick your <em>place.</em></h2></div>
-          <button className="text-link" onClick={() => toast.info("More locations are coming to your Clout network.")}>View all locations <ArrowRight size={16} /></button>
-        </div>
-        <div className="container venue-grid">
-          {venues.map((venue, index) => (
-            <article className={`venue-card ${index === 0 ? "venue-card-featured" : ""}`} key={venue.id}>
-              <VenueVisual venue={venue} />
-              <div className="venue-content">
-                <div className="venue-topline"><span>{venue.eyebrow}</span><span className="availability-dot" /> <small>{venue.availability}</small></div>
-                <h3>{venue.name}</h3>
-                <p>{venue.neighborhood}</p>
-                <div className="venue-footer"><span>{venue.category}</span><button onClick={() => openBooking(venue)} aria-label={`Reserve ${venue.name}`}><ArrowUpRightIcon /></button></div>
-              </div>
-            </article>
-          ))}
+      <section className="social-section" id="social">
+        <div className="container social-layout">
+          <div className="social-image-wrap"><img src={visuals.social} alt="Friends enjoying a club night" /><div className="social-image-gradient" /><div className="social-tag"><Heart size={14} fill="currentColor" /> Loved by the group chat</div></div>
+          <div className="social-copy"><p className="electric-label"><UsersRound size={13} /> The social layer</p><h2>Good nights<br />find <em>good people.</em></h2><p>Your Clout profile puts your favorite places, friends, benefits and plans in one beautiful little orbit. Less scrolling. More stories.</p><div className="social-feature-list"><div><span><CircleUserRound size={16} /></span><p><b>Your people, in the know</b><small>See who is going before you decide.</small></p></div><div><span><Crown size={16} /></span><p><b>Your status, seen</b><small>Benefits that feel like a friend at the door.</small></p></div><div><span><WalletCards size={16} /></span><p><b>Your wallet, ready</b><small>Tables, tips and arrivals without the scramble.</small></p></div></div><Button variant="outline" onClick={() => openBooking()}>Start your night <ArrowRight size={16} /></Button></div>
         </div>
       </section>
 
-      <section className="journey-section">
-        <div className="container journey-grid">
-          <div className="journey-copy"><p className="eyebrow">ONE EFFORTLESS FLOW</p><h2>Plan less.<br /><em>Feel more.</em></h2><p>From your first tap to your final toast, Clout handles the details that make going out feel effortless.</p><Button variant="outline" onClick={() => openBooking()}>Build your night <ArrowRight size={16} /></Button></div>
-          <div className="journey-steps">
-            {[
-              ["01", "Discover", "A tailored world of places, events and offers."],
-              ["02", "Reserve", "Secure tables, parking and the details that matter."],
-              ["03", "Arrive", "Your status and preferences arrive before you do."],
-              ["04", "Return", "Rewards and memories make the next night better."],
-            ].map(([number, title, detail]) => <div className="journey-step" key={number}><span>{number}</span><h3>{title}</h3><p>{detail}</p><ChevronRight size={18} /></div>)}
-          </div>
-        </div>
+      <section className="pulse-section container">
+        <div className="pulse-heading"><div><p className="electric-label"><Flame size={13} fill="currentColor" /> Social pulse</p><h2>People are <em>talking.</em></h2></div><button onClick={() => toast.info("The Social Feed is ready to connect to authenticated member profiles.")}>Open social feed <ArrowRight size={15} /></button></div>
+        <div className="pulse-grid"><article className="pulse-card pulse-card-video"><img src={visuals.rooftop} alt="Rooftop club atmosphere" /><div className="pulse-overlay" /><span className="pulse-poster"><CloutMark /> VIOLET ROOM</span><div><p>“The room was unreal.”</p><small>Posted 18 min ago · <Heart size={12} fill="currentColor" /> 486</small></div></article><article className="pulse-card pulse-card-plan"><div className="plan-card-top"><span>FRI · SEP 26</span><b>9:30 PM</b></div><h3>Violet<br /><em>Saturdays</em></h3><p>at Noir Social House</p><div className="plan-friends"><AvatarStack /><span>+ 18 friends tapped in</span></div><button onClick={() => openBooking(scenes[0])}>Join the plan <ArrowRight size={15} /></button></article><article className="pulse-card pulse-card-connect"><div className="connect-orbit"><span className="orbit-avatar avatar-a">J</span><span className="orbit-avatar avatar-b">A</span><span className="orbit-avatar avatar-c">M</span><span className="orbit-core"><CloutMark /></span></div><h3>Match the<br />energy.</h3><p>See your people. Find your room. Make a move.</p><button onClick={() => toast.info("Connection requests are a protected, member-only feature in the next release.")}>Find your scene <ArrowRight size={15} /></button></article></div>
       </section>
 
-      <section className="membership-section container" id="memberships">
-        <div className="membership-header"><div><p className="eyebrow">MEMBERSHIP, PERSONALIZED</p><h2>More ways to<br /><em>be expected.</em></h2></div><p>Choose the access that matches the way you go out. Your benefits are recognized at every Clout location.</p></div>
-        <div className="membership-grid">
-          {membershipPlans.map((plan, index) => (
-            <article className={`membership-card ${index === 1 ? "membership-card-highlight" : ""}`} key={plan.name}>
-              {index === 1 && <div className="popular-ribbon">Most chosen</div>}
-              <div className="membership-symbol">{index === 0 ? <Heart size={20} /> : index === 1 ? <BadgeCheck size={20} /> : <Crown size={20} />}</div>
-              <div><h3>{plan.name}</h3><p>{plan.detail}</p></div>
-              <div className="membership-price"><b>{plan.price}</b><span>/ month</span></div>
-              <div className="membership-perk"><Check size={15} /> <span>{plan.benefit}</span></div>
-              <Button variant={index === 1 ? "default" : "outline"} onClick={() => { setMembership(plan.name); openBooking(); }}>Choose {plan.name} <ArrowRight size={15} /></Button>
-            </article>
-          ))}
-        </div>
-      </section>
+      <section className="membership-night" id="membership"><div className="membership-noise" /><div className="container membership-night-layout"><div><p className="electric-label"><Crown size={13} fill="currentColor" /> Choose your access</p><h2>A little more<br /><em>Clout goes far.</em></h2><p>Join free or pick the level of access that lets the night meet you halfway.</p></div><div className="night-membership-grid">{membershipPlans.map((plan, index) => <article key={plan.name} className={`night-membership-card ${index === 1 ? "night-membership-featured" : ""}`}><div><span>{index === 0 ? "01" : index === 1 ? "02" : "03"}</span>{index === 1 && <i>Most popular</i>}</div><h3>{plan.name}</h3><p>{plan.detail}</p><b>{plan.price}<small>/mo</small></b><ul><li><Check size={14} /> {plan.credit ? `${money(plan.credit)} booking credit` : "Explore all locations"}</li><li><Check size={14} /> {index === 0 ? "Public event access" : "Priority arrival"}</li><li><Check size={14} /> {index === 2 ? "Personal concierge" : "Clout rewards"}</li></ul><Button onClick={() => { setMembership(plan.name); openBooking(); }}>{index === 0 ? "Get started" : `Choose ${plan.name}`} <ArrowRight size={15} /></Button></article>)}</div></div></section>
 
-      <section className="operator-section" id="owner">
-        <div className="container operator-wrap">
-          <div className="operator-copy"><p className="eyebrow eyebrow-light">FOR HOSPITALITY OPERATORS</p><h2>Your culture.<br /><em>Your operating system.</em></h2><p>Clout brings customer history, memberships, service, wallets and staff attribution into one configurable platform—without changing what makes your location yours.</p><div className="operator-chips"><span><Check size={14} /> Configurable by location</span><span><Check size={14} /> Staff attribution built in</span></div><Button className="operator-button" onClick={() => toast.info("Operator onboarding is available by invitation.")}>Talk to Clout <ArrowRight size={16} /></Button></div>
-          <div className="operator-dashboard">
-            <div className="dash-top"><div><span className="dash-overline">LIVE LOCATION PULSE</span><h3>Noir Social House</h3></div><span className="dash-live"><i /> Live</span></div>
-            <div className="dash-metrics">
-              <div><span>Tonight's bookings</span><b>{(owner.data?.reservations ?? 0) + 18}</b><small><TrendingUp size={13} /> +24% vs last Fri</small></div>
-              <div><span>Guest value captured</span><b>{money(dashboardRevenue + 12840)}</b><small><CircleDollarSign size={13} /> Wallet + booking</small></div>
-            </div>
-            <div className="dash-ledger"><div className="dash-ledger-heading"><span>Reservation ledger</span><span>Arrival status</span></div>{owner.data?.recentReservations?.length ? owner.data.recentReservations.map(item => <div className="dash-ledger-row" key={item.confirmationCode}><span><b>{item.customerName}</b><small>{item.venueName}</small></span><span className="dash-confirmed">Confirmed</span></div>) : <><div className="dash-ledger-row"><span><b>Avery Matthews</b><small>VIP host attribution</small></span><span className="dash-confirmed">Arrived</span></div><div className="dash-ledger-row"><span><b>Jules R.</b><small>Mega Clout member</small></span><span className="dash-pending">9:30 PM</span></div><div className="dash-ledger-row"><span><b>Marcus H.</b><small>Valet prepay</small></span><span className="dash-confirmed">Confirmed</span></div></>}</div>
-          </div>
-        </div>
-      </section>
+      <section className="venue-section" id="operators"><div className="container venue-layout"><div><p className="electric-label"><ShieldCheck size={13} /> For the people running the room</p><h2>Keep your<br /><em>scene in sync.</em></h2><p>Clout gives venues a sharper read on guests, bookings, staff attribution, membership revenue and the energy behind every arrival.</p><Button onClick={() => toast.info("Venue onboarding is available by invitation.")}>Bring Clout to your venue <ArrowRight size={16} /></Button></div><div className="venue-console"><div className="console-top"><div><span>NOIR SOCIAL HOUSE</span><b>Tonight’s pulse</b></div><i><span /> Live</i></div><div className="console-stats"><div><span>On the list</span><b>{(owner.data?.reservations ?? 0) + 86}</b><small>+28% from last Friday</small></div><div><span>Guest spend</span><b>${Math.round((owner.data?.revenueCents ?? 0) / 100 + 12840).toLocaleString()}</b><small>Bookings + wallet</small></div></div><div className="console-feed"><span className="console-feed-title">Just happened</span>{owner.data?.recentReservations?.length ? owner.data.recentReservations.slice(0, 3).map(reservation => <div key={reservation.confirmationCode}><span className="console-avatar">{reservation.customerName.slice(0, 1)}</span><p><b>{reservation.customerName}</b><small>{reservation.venueName}</small></p><i>Confirmed</i></div>) : <><div><span className="console-avatar">J</span><p><b>Jordan Taylor</b><small>Mega Clout · Table 12</small></p><i>Confirmed</i></div><div><span className="console-avatar console-avatar-blue">M</span><p><b>Mia Richardson</b><small>Violet Room · 4 guests</small></p><i>Arrived</i></div></>}</div></div></div></section>
 
-      <section className="cta-section container">
-        <div><p className="eyebrow">YOUR NEXT CHAPTER STARTS HERE</p><h2>The night is<br /><em>waiting for you.</em></h2></div>
-        <Button size="lg" onClick={() => openBooking()}>Start with a reservation <ArrowRight size={17} /></Button>
-      </section>
+      <section className="night-cta container"><div><p className="electric-label"><Sparkles size={13} /> The city is calling</p><h2>Don’t just go out.<br /><em>Go with Clout.</em></h2></div><Button size="lg" onClick={() => openBooking()}><Zap size={16} fill="currentColor" /> Get on the list <ArrowRight size={17} /></Button></section>
 
-      <footer className="site-footer">
-        <div className="container footer-grid"><div><Wordmark dark /><p>Hospitality, remembered.</p></div><div className="footer-links"><button onClick={() => scrollTo("discover")}>Discover</button><button onClick={() => scrollTo("memberships")}>Membership</button><button onClick={() => scrollTo("owner")}>For operators</button></div><div className="footer-meta">© 2026 Clout Experience<br />Designed for modern hospitality.</div></div>
-      </footer>
+      <footer className="night-footer"><div className="container"><Wordmark /><p>Good energy, right on time.</p><div><button onClick={() => scrollTo("tonight")}>Tonight</button><button onClick={() => scrollTo("social")}>Social</button><button onClick={() => scrollTo("membership")}>Membership</button><button onClick={() => scrollTo("operators")}>For venues</button></div><small>© 2026 Clout Experience</small></div></footer>
 
-      <Dialog open={bookingOpen} onOpenChange={setBookingOpen}>
-        <DialogContent className="booking-dialog" aria-describedby={undefined}>
-          {confirmation ? (
-            <div className="booking-success">
-              <div className="success-seal"><Check size={32} /></div>
-              <p className="eyebrow">YOUR EXPERIENCE IS SET</p>
-              <h2>Consider it<br /><em>handled.</em></h2>
-              <p>Your place at <b>{selectedVenue.name}</b> is confirmed. Your host will have the details before you arrive.</p>
-              <div className="confirmation-code"><span>CONFIRMATION</span><b>{confirmation}</b></div>
-              <Button onClick={() => setBookingOpen(false)}>Back to Clout <ArrowRight size={16} /></Button>
-            </div>
-          ) : (
-            <form onSubmit={event => {
-              event.preventDefault();
-              const form = new FormData(event.currentTarget);
-              createReservation.mutate({
-                venueId: selectedVenue.id,
-                venueName: selectedVenue.name,
-                customerName: String(form.get("name")),
-                email: String(form.get("email")),
-                phone: String(form.get("phone") || ""),
-                reservationDate: String(form.get("date")),
-                reservationTime: String(form.get("time")),
-                partySize,
-                serviceName: service.name,
-                membershipTier: membership,
-                addOns: selectedExtras.map(item => item.label),
-                subtotalCents: subtotal * 100,
-                benefitCents: membershipCredit * 100,
-                totalCents: total * 100,
-                referralCode: String(form.get("referral") || ""),
-              });
-            }}>
-              <div className="booking-title"><div><p className="eyebrow">PLAN YOUR EXPERIENCE</p><h2>A night with<br /><em>your name on it.</em></h2></div><div className="booking-total"><span>Due today</span><b>{money(total)}</b></div></div>
-              <div className="booking-layout">
-                <div className="booking-controls">
-                  <div className="field-group"><Label>Choose a location</Label><div className="choice-grid venue-choice-grid">{venues.map(venue => <button type="button" onClick={() => changeVenue(venue)} className={`choice-card ${selectedVenue.id === venue.id ? "selected" : ""}`} key={venue.id}><VenueVisual venue={venue} compact /><span><b>{venue.name}</b><small>{venue.neighborhood}</small></span><Check size={15} /></button>)}</div></div>
-                  <div className="field-group"><Label>Choose your experience</Label><div className="service-list">{selectedVenue.services.map((item, index) => <button type="button" className={`service-choice ${selectedServiceIndex === index ? "selected" : ""}`} onClick={() => setSelectedServiceIndex(index)} key={item.name}><span><b>{item.name}</b><small>{item.detail}</small></span><strong>{money(item.price)}</strong></button>)}</div></div>
-                  <div className="booking-input-row"><div><Label htmlFor="booking-date">Date</Label><div className="input-wrap"><CalendarDays size={15} /><Input id="booking-date" name="date" type="date" defaultValue="2026-09-26" required /></div></div><div><Label htmlFor="booking-time">Arrival</Label><div className="input-wrap"><Clock3 size={15} /><Input id="booking-time" name="time" type="time" defaultValue="21:30" required /></div></div><div><Label>Guests</Label><div className="stepper"><button type="button" onClick={() => setPartySize(Math.max(1, partySize - 1))}><Minus size={14} /></button><span>{partySize}</span><button type="button" onClick={() => setPartySize(Math.min(20, partySize + 1))}><Plus size={14} /></button></div></div></div>
-                  <div className="field-group"><Label>Membership</Label><div className="membership-select-grid">{membershipPlans.map(plan => <button type="button" key={plan.name} className={`membership-select ${membership === plan.name ? "selected" : ""}`} onClick={() => setMembership(plan.name)}><span><b>{plan.name}</b><small>{plan.detail}</small></span><strong>{plan.price}</strong></button>)}</div></div>
-                  <div className="field-group"><Label>Add to your arrival</Label><div className="addon-list">{addOns.map(addOn => { const Icon = addOn.icon; const chosen = extras.includes(addOn.id); return <button type="button" key={addOn.id} onClick={() => toggleExtra(addOn.id)} className={`addon-choice ${chosen ? "selected" : ""}`}><span className="addon-icon"><Icon size={16} /></span><span><b>{addOn.label}</b><small>{addOn.detail}</small></span><strong>+{money(addOn.price)}</strong><i>{chosen && <Check size={13} />}</i></button>; })}</div></div>
-                  <div className="guest-fields"><div><Label htmlFor="guest-name">Your name</Label><Input id="guest-name" name="name" placeholder="Jordan Taylor" required /></div><div><Label htmlFor="guest-email">Email</Label><Input id="guest-email" name="email" type="email" placeholder="jordan@example.com" required /></div><div><Label htmlFor="guest-phone">Phone <span>(optional)</span></Label><Input id="guest-phone" name="phone" placeholder="(713) 555-0123" /></div><div><Label htmlFor="referral">Referral <span>(optional)</span></Label><Input id="referral" name="referral" placeholder="Staff or partner code" /></div></div>
-                </div>
-                <aside className="booking-summary"><div className="summary-venue"><VenueVisual venue={selectedVenue} compact /><div><span>{selectedVenue.eyebrow}</span><b>{selectedVenue.name}</b><small>{selectedVenue.neighborhood}</small></div></div><div className="summary-detail"><span>{service.name}</span><b>{money(service.price)}</b></div>{selectedExtras.map(addOn => <div className="summary-detail muted" key={addOn.id}><span>{addOn.label}</span><b>{money(addOn.price)}</b></div>)}<div className="summary-divider" />{membershipCredit > 0 && <div className="summary-detail benefit"><span><Gift size={14} /> {membership} credit</span><b>−{money(membershipCredit)}</b></div>}<div className="summary-total"><span>Due today</span><b>{money(total)}</b></div><p className="summary-note"><ShieldCheck size={14} /> No payment will be processed in this demo. Your confirmed reservation is recorded in the Clout ledger.</p><Button type="submit" size="lg" disabled={createReservation.isPending}>{createReservation.isPending ? "Securing your night…" : "Confirm reservation"} <ArrowRight size={16} /></Button><span className="summary-secure"><ReceiptText size={13} /> Receipt & confirmation included</span></aside>
-              </div>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
+      <Dialog open={bookingOpen} onOpenChange={setBookingOpen}><DialogContent className="night-booking-dialog" aria-describedby={undefined}>{confirmation ? <div className="night-booking-success"><div className="success-orbit"><Check size={29} /></div><p className="electric-label">YOU’RE ON THE LIST</p><h2>Let’s make<br /><em>it a night.</em></h2><p>Your place at <b>{selectedScene.name}</b> is set. We’ll have the energy waiting.</p><div className="success-code"><span>YOUR CLOUT CODE</span><b>{confirmation}</b></div><Button onClick={() => setBookingOpen(false)}>Back to Clout <ArrowRight size={16} /></Button></div> : <form onSubmit={event => { event.preventDefault(); const form = new FormData(event.currentTarget); createReservation.mutate({ venueId: selectedScene.id, venueName: selectedScene.name, customerName: String(form.get("name")), email: String(form.get("email")), phone: String(form.get("phone") || ""), reservationDate: String(form.get("date")), reservationTime: String(form.get("time")), partySize, serviceName: service.name, membershipTier: membership, addOns: selectedExtras.map(item => item.label), subtotalCents: subtotal * 100, benefitCents: credit * 100, totalCents: total * 100, referralCode: String(form.get("referral") || "") }); }}><div className="night-booking-heading"><div><p className="electric-label">PICK YOUR SCENE</p><h2>Tonight is<br /><em>already yours.</em></h2></div><div><span>Due today</span><b>{money(total)}</b></div></div><div className="night-booking-layout"><div className="night-booking-controls"><section><Label>Where are we going?</Label><div className="booking-scene-grid">{scenes.map(scene => <button type="button" key={scene.id} className={selectedScene.id === scene.id ? "selected" : ""} onClick={() => chooseScene(scene)}><Poster scene={scene} /><span><b>{scene.name}</b><small>{scene.neighborhood}</small></span><i><Check size={13} /></i></button>)}</div></section><section><Label>Pick your spot</Label><div className="night-service-list">{selectedScene.services.map((item, index) => <button type="button" key={item.name} className={index === selectedServiceIndex ? "selected" : ""} onClick={() => setSelectedServiceIndex(index)}><span><b>{item.name}</b><small>{item.detail}</small></span><strong>{money(item.price)}</strong></button>)}</div></section><div className="night-booking-row"><div><Label htmlFor="night-date">Date</Label><div className="night-input-wrap"><CalendarDays size={15} /><Input id="night-date" name="date" type="date" defaultValue="2026-09-26" required /></div></div><div><Label htmlFor="night-time">Arrival</Label><div className="night-input-wrap"><Clock3 size={15} /><Input id="night-time" name="time" type="time" defaultValue="21:30" required /></div></div><div><Label>Guests</Label><div className="night-stepper"><button type="button" onClick={() => setPartySize(Math.max(1, partySize - 1))}><Minus size={14} /></button><span>{partySize}</span><button type="button" onClick={() => setPartySize(Math.min(20, partySize + 1))}><Plus size={14} /></button></div></div></div><section><Label>How are you pulling up?</Label><div className="night-membership-select">{membershipPlans.map(plan => <button type="button" key={plan.name} className={membership === plan.name ? "selected" : ""} onClick={() => setMembership(plan.name)}><span><b>{plan.name}</b><small>{plan.detail}</small></span><strong>{plan.price}</strong></button>)}</div></section><section><Label>Set the tone</Label><div className="night-addon-list">{addOns.map(addOn => { const Icon = addOn.icon; const selected = extras.includes(addOn.id); return <button type="button" key={addOn.id} className={selected ? "selected" : ""} onClick={() => toggleExtra(addOn.id)}><span className="addon-symbol"><Icon size={15} /></span><span><b>{addOn.label}</b><small>{addOn.detail}</small></span><strong>+{money(addOn.price)}</strong><i>{selected && <Check size={12} />}</i></button> })}</div></section><section className="night-guest-inputs"><div><Label htmlFor="night-name">Your name</Label><Input id="night-name" name="name" placeholder="Jordan Taylor" required /></div><div><Label htmlFor="night-email">Email</Label><Input id="night-email" name="email" type="email" placeholder="jordan@example.com" required /></div><div><Label htmlFor="night-phone">Phone <small>(optional)</small></Label><Input id="night-phone" name="phone" placeholder="(713) 555-0123" /></div><div><Label htmlFor="night-referral">Referral <small>(optional)</small></Label><Input id="night-referral" name="referral" placeholder="Who put you on?" /></div></section></div><aside className="night-booking-summary"><Poster scene={selectedScene} /><div className="summary-title"><span>{selectedScene.time}</span><b>{selectedScene.name}</b><small>{selectedScene.neighborhood}</small></div><div className="summary-row"><span>{service.name}</span><b>{money(service.price)}</b></div>{selectedExtras.map(addOn => <div className="summary-row muted" key={addOn.id}><span>{addOn.label}</span><b>{money(addOn.price)}</b></div>)}{credit > 0 && <div className="summary-row credit"><span><Sparkles size={13} /> {membership} credit</span><b>−{money(credit)}</b></div>}<div className="night-summary-total"><span>Due today</span><b>{money(total)}</b></div><p><ShieldCheck size={13} /> This demo creates your reservation and wallet ledger entry. No payment is processed.</p><Button type="submit" size="lg" disabled={createReservation.isPending}>{createReservation.isPending ? "Locking in your night…" : "Get on the list"} <ArrowRight size={16} /></Button><small><Send size={12} /> Confirmation in one tap</small></aside></div></form>}</DialogContent></Dialog>
     </main>
   );
-}
-
-function ArrowUpRightIcon() {
-  return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17 17 7" /><path d="M7 7h10v10" /></svg>;
 }
