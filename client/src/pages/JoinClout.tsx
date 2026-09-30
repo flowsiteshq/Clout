@@ -50,6 +50,10 @@ export default function JoinClout() {
           <h1>Help create<br /><em>brighter nights.</em></h1>
           <p>Clout is building the social layer for hospitality. We’re looking for people who know how to make every guest feel like they belong in the room.</p>
           <div className="join-value-list"><div><UsersRound size={18} /><span><b>Build the culture</b><small>Bring your energy to hospitality that remembers people.</small></span></div><div><Crown size={18} /><span><b>Grow with the network</b><small>Opportunities across venues, events and markets.</small></span></div><div><ShieldCheck size={18} /><span><b>Start with a conversation</b><small>Apply first. We match the right people to the right role.</small></span></div></div>
+          <div className="join-qr-callout">
+            <div className="join-qr-image"><img src="/manus-storage/join-clout-qr_04134b26.png" alt="QR code that opens the Join Clout employee application" /></div>
+            <div><p className="join-kicker">MOBILE APPLICATION</p><b>Scan to join from your phone.</b><small>Point your camera at the code to open the Clout team application instantly.</small><code>clouthospl-pbvuouvk.manus.space/join</code></div>
+          </div>
         </div>
         <form className="join-form" onSubmit={event => { event.preventDefault(); const form = new FormData(event.currentTarget); application.mutate({ fullName: String(form.get("fullName")), email: String(form.get("email")), phone: String(form.get("phone")), roleInterest, preferredVenue, socialHandle: String(form.get("socialHandle") || ""), availability: String(form.get("availability")), note: String(form.get("note") || "") }); }}>
           <div className="join-form-heading"><p className="join-kicker">YOUR INTRO</p><h2>Tell us where<br /><em>you shine.</em></h2></div>
