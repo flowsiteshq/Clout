@@ -1,6 +1,8 @@
 import { count, desc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
+  employeeApplications,
+  InsertEmployeeApplication,
   InsertReservation,
   InsertUser,
   reservations,
@@ -74,6 +76,13 @@ export async function createReservation(reservation: InsertReservation) {
   });
 
   return reservationId;
+}
+
+export async function createEmployeeApplication(application: InsertEmployeeApplication) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.insert(employeeApplications).values(application);
+  return Number(result[0].insertId);
 }
 
 export async function getOwnerSnapshot() {

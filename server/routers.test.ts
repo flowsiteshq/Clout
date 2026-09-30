@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("./db", () => ({
   createReservation: vi.fn(async () => 42),
+  createEmployeeApplication: vi.fn(async () => 17),
   getOwnerSnapshot: vi.fn(async () => ({
     reservations: 2,
     revenueCents: 42000,
@@ -50,5 +51,22 @@ describe("Clout reservation transaction", () => {
       reservations: 2,
       revenueCents: 42000,
     });
+  });
+});
+
+describe("Clout employee application", () => {
+  it("records a public employee application for management review", async () => {
+    const caller = appRouter.createCaller(createContext());
+
+    await expect(caller.employeeApplication.create({
+      fullName: "Jordan Taylor",
+      email: "jordan@example.com",
+      phone: "713-555-0123",
+      roleInterest: "Host / Guest Experience",
+      preferredVenue: "Noir Social House · Houston",
+      availability: "Thursday through Saturday after 7 PM",
+      socialHandle: "@jordan",
+      note: "Five years in hospitality and events.",
+    })).resolves.toEqual({ applicationId: 17, status: "received" });
   });
 });

@@ -77,6 +77,26 @@ export const walletTransactions = mysqlTable("walletTransactions", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+/**
+ * Public onboarding intake for hospitality staff, promoters, and other Clout
+ * team roles. Management can review applicants before activating a staff
+ * profile, permissions, or wallet access.
+ */
+export const employeeApplications = mysqlTable("employeeApplications", {
+  id: int("id").autoincrement().primaryKey(),
+  fullName: varchar("fullName", { length: 160 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  roleInterest: varchar("roleInterest", { length: 100 }).notNull(),
+  preferredVenue: varchar("preferredVenue", { length: 160 }).notNull(),
+  socialHandle: varchar("socialHandle", { length: 120 }),
+  availability: varchar("availability", { length: 255 }).notNull(),
+  note: text("note"),
+  status: mysqlEnum("status", ["new", "reviewing", "approved", "declined"]).default("new").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type InsertReservation = typeof reservations.$inferInsert;
+export type InsertEmployeeApplication = typeof employeeApplications.$inferInsert;

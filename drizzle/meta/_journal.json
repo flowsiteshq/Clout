@@ -15,6 +15,13 @@
       "when": 1790104654533,
       "tag": "0001_white_enchantress",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1790808006632,
+      "tag": "0002_bright_venom",
+      "breakpoints": true
     }
   ]
 }

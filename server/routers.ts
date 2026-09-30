@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
-import { createReservation, getOwnerSnapshot } from "./db";
+import { createEmployeeApplication, createReservation, getOwnerSnapshot } from "./db";
 
 function confirmationCode() {
   return `CLT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
@@ -53,6 +53,31 @@ export const appRouter = router({
         });
 
         return { confirmationCode: code, reservationId: id, status: "confirmed" as const };
+      }),
+  }),
+
+  employeeApplication: router({
+    create: publicProcedure
+      .input(
+        z.object({
+          fullName: z.string().min(2).max(160),
+          email: z.string().email(),
+          phone: z.string().min(7).max(32),
+          roleInterest: z.string().min(2).max(100),
+          preferredVenue: z.string().min(2).max(160),
+          socialHandle: z.string().max(120).optional(),
+          availability: z.string().min(2).max(255),
+          note: z.string().max(1000).optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const id = await createEmployeeApplication({
+          ...input,
+          socialHandle: input.socialHandle || null,
+          note: input.note || null,
+          status: "new",
+        });
+        return { applicationId: id, status: "received" as const };
       }),
   }),
 

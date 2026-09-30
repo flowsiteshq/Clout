@@ -4,12 +4,14 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import JoinClout from "./pages/JoinClout";
 import NotFound from "./pages/NotFound";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/join" component={JoinClout} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
