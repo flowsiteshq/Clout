@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 
 const heroImage = "/manus-storage/clout-crowd-hero_bf7b39f6.jpg";
-const roles = ["Host / Guest Experience", "Promoter / Clout Representative", "Server / Bottle Service", "Security / Door Team", "Venue Operations", "Creator / Content Team"];
+const roles = ["Host / Guest Experience", "Promoter / Clout Representative", "Server / Bottle Service", "Cook / Chef", "Security / Door Team", "Venue Operations", "Creator / Content Team"];
 const venues = ["Noir Social House · Houston", "The Violet Room · Houston", "Afterglow Rooftop · Houston", "Open to the Clout network"];
 
 function Mark() {
