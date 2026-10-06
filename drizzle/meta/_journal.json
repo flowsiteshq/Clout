@@ -22,6 +22,20 @@
       "when": 1790808006632,
       "tag": "0002_bright_venom",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1791327153307,
+      "tag": "0003_chief_shiva",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1791327187003,
+      "tag": "0004_eminent_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

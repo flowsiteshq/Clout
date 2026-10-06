@@ -21,6 +21,20 @@ function createContext(): TrpcContext {
   };
 }
 
+const applicant = {
+  fullName: "Jordan Taylor",
+  email: "jordan@example.com",
+  phone: "713-555-0123",
+  roleInterest: "Cook / Chef",
+  preferredVenue: "Noir Social House · Houston",
+  availability: "Thursday through Saturday after 7 PM",
+  socialHandle: "@jordan",
+  note: "Five years in hospitality and events.",
+  ndaAccepted: true as const,
+  ndaSignatureName: "Jordan Taylor",
+  ndaVersion: "CLOUT-NDA-2026-10-06",
+};
+
 describe("Clout reservation transaction", () => {
   it("records a complete guest reservation and returns a confirmation", async () => {
     const caller = appRouter.createCaller(createContext());
@@ -55,18 +69,21 @@ describe("Clout reservation transaction", () => {
 });
 
 describe("Clout employee application", () => {
-  it("records a public employee application for management review", async () => {
+  it("records a public application only with an affirmative signed NDA", async () => {
     const caller = appRouter.createCaller(createContext());
 
-    await expect(caller.employeeApplication.create({
-      fullName: "Jordan Taylor",
-      email: "jordan@example.com",
-      phone: "713-555-0123",
-      roleInterest: "Host / Guest Experience",
-      preferredVenue: "Noir Social House · Houston",
-      availability: "Thursday through Saturday after 7 PM",
-      socialHandle: "@jordan",
-      note: "Five years in hospitality and events.",
-    })).resolves.toEqual({ applicationId: 17, status: "received" });
+    await expect(caller.employeeApplication.create(applicant)).resolves.toEqual({ applicationId: 17, status: "received" });
+  });
+
+  it("rejects an application that does not affirm the NDA", async () => {
+    const caller = appRouter.createCaller(createContext());
+
+    await expect(caller.employeeApplication.create({ ...applicant, ndaAccepted: false } as never)).rejects.toThrow();
+  });
+
+  it("rejects an NDA signature that does not match the applicant name", async () => {
+    const caller = appRouter.createCaller(createContext());
+
+    await expect(caller.employeeApplication.create({ ...applicant, ndaSignatureName: "Taylor Jordan" })).rejects.toThrow("NDA signature must match the applicant's full name");
   });
 });

@@ -68,11 +68,19 @@ export const appRouter = router({
           socialHandle: z.string().max(120).optional(),
           availability: z.string().min(2).max(255),
           note: z.string().max(1000).optional(),
+          ndaAccepted: z.literal(true),
+          ndaSignatureName: z.string().min(2).max(160),
+          ndaVersion: z.string().min(8).max(48),
         })
       )
       .mutation(async ({ input }) => {
+        if (input.ndaSignatureName.trim().toLocaleLowerCase() !== input.fullName.trim().toLocaleLowerCase()) {
+          throw new Error("NDA signature must match the applicant's full name");
+        }
         const id = await createEmployeeApplication({
           ...input,
+          ndaAccepted: 1,
+          ndaSignatureName: input.ndaSignatureName.trim(),
           socialHandle: input.socialHandle || null,
           note: input.note || null,
           status: "new",

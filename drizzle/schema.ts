@@ -92,6 +92,11 @@ export const employeeApplications = mysqlTable("employeeApplications", {
   socialHandle: varchar("socialHandle", { length: 120 }),
   availability: varchar("availability", { length: 255 }).notNull(),
   note: text("note"),
+  // Legacy applications are explicitly marked as not accepted until a signed NDA is collected.
+  ndaAccepted: int("ndaAccepted").notNull().default(0),
+  ndaSignatureName: varchar("ndaSignatureName", { length: 160 }).notNull().default(""),
+  ndaVersion: varchar("ndaVersion", { length: 48 }).notNull().default("legacy-no-nda"),
+  ndaAcceptedAt: timestamp("ndaAcceptedAt").defaultNow().notNull(),
   status: mysqlEnum("status", ["new", "reviewing", "approved", "declined"]).default("new").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
