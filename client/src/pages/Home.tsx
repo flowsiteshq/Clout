@@ -1,112 +1,107 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowRight,
-  Bell,
+  BadgeDollarSign,
   CalendarDays,
-  Check,
-  ChevronRight,
-  CircleUserRound,
-  Compass,
+  Camera,
+  ChefHat,
   Crown,
-  Heart,
-  Home as HomeIcon,
   MapPin,
-  Menu,
-  MessageCircleHeart,
-  Plus,
-  Search,
-  Settings,
-  ShieldCheck,
+  MicVocal,
   Sparkles,
-  Ticket,
+  Star,
   UsersRound,
-  X,
+  WalletCards,
 } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { trpc } from "@/lib/trpc";
 
 const media = {
-  hero: "/manus-storage/clout-crowd-hero_bf7b39f6.jpg",
-  party: "/manus-storage/clout-hero_2a83a157.jpg",
-  rooftop: "/manus-storage/clout-rooftop_bf42d500.jpg",
-  friends: "/manus-storage/clout-social_1244bf99.jpg",
+  hero: "/manus-storage/clout-gold-hero_236c24f3.jpg",
+  table: "/manus-storage/clout-gold-table_68e6f0e6.jpg",
+  creator: "/manus-storage/clout-creator-card_7ec33220.jpg",
 };
 
-type Venue = { id: string; name: string; location: string; energy: number; guests: number; image: string; price: number };
-const venues: Venue[] = [
-  { id: "noir-social-houston", name: "Noir Social House", location: "Nightlife · Houston, TX", energy: 91, guests: 312, image: media.party, price: 250 },
-  { id: "violet-room", name: "The Violet Room", location: "Rooftop Lounge · 0.8 mi", energy: 88, guests: 147, image: media.rooftop, price: 420 },
-  { id: "afterglow", name: "Afterglow", location: "Downtown · 1.2 mi", energy: 86, guests: 94, image: media.friends, price: 220 },
-];
-const plans = [
-  { name: "Social", price: "$0", note: "Explore the city", perks: ["Explore the city", "Save your favorites", "Basic access"] },
-  { name: "Clout", price: "$99", note: "The move, on lock", perks: ["Priority guest lists", "Members-only events", "Monthly credits", "Clout+ badge"] },
-  { name: "Mega Clout", price: "$299", note: "For the unforgettable", perks: ["VIP experiences", "Personal concierge", "Exclusive events", "All Clout+ benefits"] },
+const filters = ["All", "Hosting", "Influencer", "Entertainment", "Creator", "Hospitality"];
+const gigs = [
+  { type: "Hosting", title: "Club Host", venue: "Velvet Room · Houston", pay: "$500+", icon: Crown, image: media.table },
+  { type: "Influencer", title: "Restaurant Influencer", venue: "Mila Social · Houston", pay: "$250+", icon: Sparkles, image: media.creator },
+  { type: "Hosting", title: "Birthday Party Host", venue: "Private Event · Houston", pay: "$400+", icon: CalendarDays, image: media.table },
+  { type: "Creator", title: "Content Creator", venue: "Brand Campaign · Houston", pay: "$350+", icon: Camera, image: media.creator },
+  { type: "Entertainment", title: "Live Entertainment", venue: "Rooftop Session · Houston", pay: "$500+", icon: MicVocal, image: media.table },
+  { type: "Hospitality", title: "Cook / Chef", venue: "Partner Venue · Houston", pay: "$300+", icon: ChefHat, image: media.creator },
 ];
 
-function Mark() { return <span className="mark">C</span>; }
-function Logo() { return <div className="reference-logo"><Mark /><span>CLOUT</span></div>; }
-function Avatar({ letter, color = "violet" }: { letter: string; color?: string }) { return <span className={`person-avatar ${color}`}>{letter}</span>; }
-function AvatarRow() { return <div className="avatar-row"><Avatar letter="J" color="pink" /><Avatar letter="A" color="blue" /><Avatar letter="M" color="gold" /><Avatar letter="S" color="violet" /><span className="more-avatar">+3</span></div>; }
-
-function PhoneNav({ active }: { active: "Tonight" | "Explore" | "Plans" | "Clout" | "Profile" }) {
-  const items = [["Tonight", HomeIcon], ["Explore", Search], ["Plans", CalendarDays], ["Clout", UsersRound], ["Profile", CircleUserRound]] as const;
-  return <div className="phone-nav">{items.map(([name, Icon]) => <div key={name} className={active === name ? "active" : ""}><Icon size={14} /><span>{name}</span></div>)}</div>;
+function Mark() {
+  return <span className="gold-mark"><Crown size={19} fill="currentColor" /><b>C</b></span>;
 }
 
-function TonightPhone({ onBook }: { onBook: () => void }) {
-  return <div className="phone-frame phone-home"><div className="phone-status"><span>9:41</span><span>••• ▰</span></div><div className="phone-head"><Mark /><Bell size={16} /></div><h3>Tonight in<br /><em>Houston</em></h3><p className="tiny-date">Saturday, Sep 20 · 9:41 PM</p><div className="stat-row"><div><UsersRound size={16} /><b>23</b><small>Places Active</small></div><div><UsersRound size={16} /><b>8</b><small>Friends Out</small></div><div><Sparkles size={16} /><b>3</b><small>For Your Vibe</small></div></div><div className="hot-title"><span>🔥 HOT RIGHT NOW</span><button onClick={() => toast.info("The live list is about to open.")}>See all <ChevronRight size={11} /></button></div><div className="mini-event"><img src={media.party} alt="Purple club lights" /><div className="mini-shade" /><Heart className="event-heart" size={16} /><div className="mini-event-copy"><h4>Violet Saturdays</h4><p>Noir Social House</p><div><span>🔥 91% energy</span><span><MapPin size={10} /> 1.2 mi</span></div><AvatarRow /><button onClick={onBook}>Join the Plan</button></div></div><PhoneNav active="Tonight" /></div>;
+function Logo() {
+  return <span className="gold-logo"><Mark /><b>CLOUT</b></span>;
 }
 
-function ExplorePhone({ onBook }: { onBook: () => void }) {
-  return <div className="phone-frame phone-explore"><div className="phone-status"><span>9:41</span><span>••• ▰</span></div><h3>Explore</h3><div className="phone-search"><Search size={13} /><span>Search venues, events or cuisine</span></div><div className="filter-row"><span className="selected">All</span><span>Nightlife</span><span>Lounges</span><span>Rooftops</span></div><div className="map-surface"><i className="road road-one" /><i className="road road-two" /><i className="road road-three" /><span className="map-pulse" /><span className="map-person pin-one"><Avatar letter="A" color="pink" /></span><span className="map-person pin-two"><Avatar letter="M" color="blue" /></span><span className="map-person pin-three"><Avatar letter="J" color="gold" /></span><span className="map-person pin-four"><Avatar letter="S" /></span></div><div className="map-listing"><img src={media.rooftop} alt="Rooftop club" /><div><h4>The Violet Room</h4><p>Rooftop Lounge · 0.8 mi</p></div><Ticket size={15} /></div><PhoneNav active="Explore" /></div>;
+function PhoneMock() {
+  return (
+    <div className="talent-phone" aria-label="Clout mobile application preview">
+      <div className="phone-island" />
+      <div className="talent-phone-head"><Logo /><span>9:37</span></div>
+      <p className="talent-phone-label">AVAILABLE GIGS NEAR YOU</p>
+      {gigs.slice(0, 4).map((gig) => (
+        <div className="phone-gig" key={gig.title}>
+          <img src={gig.image} alt="" />
+          <div><b>{gig.title}</b><small>{gig.venue}</small><strong>{gig.pay}</strong></div>
+          <span>APPLY</span>
+        </div>
+      ))}
+      <div className="phone-nav"><span className="active">Home</span><span>Bookings</span><span>Messages</span><span>Wallet</span></div>
+    </div>
+  );
 }
-
-function VenuePhone({ onBook }: { onBook: () => void }) {
-  return <div className="phone-frame phone-venue"><div className="phone-status"><span>9:41</span><span>••• ▰</span></div><div className="venue-image"><img src={media.party} alt="Noir Social House nightlife" /><div className="venue-image-shade" /><button><ChevronRight size={17} /></button><div><h3>Noir Social House</h3><p>Nightlife · Houston, TX</p></div></div><div className="energy-grid"><div><span>🔥</span><b>91%</b><small>Energy</small></div><div><b>312</b><small>People Here</small></div><div><b>$$</b><small>Upscale</small></div></div><p className="venue-blurb">Upscale vibes. Great music. Unforgettable nights.</p><div className="venue-thumbs"><img src={media.party} alt="Party moment" /><img src={media.rooftop} alt="Venue atmosphere" /><img src={media.friends} alt="Friends enjoying the night" /></div><Button onClick={onBook}>Join Guest List</Button><button className="outline-action" onClick={onBook}><CalendarDays size={15} /> Reserve a Table</button><div className="venue-tabs"><span>About</span><span>Events</span><span>Photos</span><span>Reviews</span></div></div>;
-}
-
-function CrewPhone({ onBook }: { onBook: () => void }) {
-  return <div className="phone-frame phone-crew"><div className="phone-status"><span>9:41</span><span>••• ▰</span></div><div className="crew-head"><h3>Your Crew</h3><button onClick={() => toast.info("Crew creation is ready for signed-in members.")}>Create <Plus size={11} /></button></div><AvatarRow /><div className="crew-section-title"><b>Tonight's Plans</b><button>See all <ChevronRight size={11} /></button></div><div className="crew-plan"><img src={media.party} alt="Violet Saturdays" /><div><h4>Violet Saturdays</h4><p>Noir Social House</p><AvatarRow /></div><ChevronRight size={15} /></div><div className="crew-plan"><img src={media.rooftop} alt="Afterglow" /><div><h4>Afterglow</h4><p>The Violet Room</p><AvatarRow /></div><ChevronRight size={15} /></div><div className="crew-section-title"><b>People You May Know</b><button>See all <ChevronRight size={11} /></button></div><div className="connect-row"><div><Avatar letter="R" color="pink" /><b>Renee</b><button onClick={() => toast.success("Connection request sent.")}>Connect</button></div><div><Avatar letter="T" color="blue" /><b>Taylor</b><button onClick={() => toast.success("Connection request sent.")}>Connect</button></div></div><PhoneNav active="Clout" /></div>;
-}
-
-function ProfilePhone() {
-  return <div className="phone-frame phone-profile"><div className="phone-status"><span>9:41</span><span>••• ▰</span></div><Settings className="profile-settings" size={17} /><div className="profile-orb"><span>J</span></div><button className="edit-profile">Edit Profile</button><div className="profile-stats"><div><b>12</b><small>Nights Out</small></div><div><b>48</b><small>Connections</small></div><div><b>28</b><small>Events</small></div><div><b>6</b><small>Tags</small></div></div><div className="profile-list"><div><CalendarDays size={16} /><span>My Plans</span><small>3 upcoming</small><ChevronRight size={14} /></div><div><ShieldCheck size={16} /><span>Saved Places</span><small>18 venues</small><ChevronRight size={14} /></div><div><ClockIcon /><span>Past Nights</span><small>Your story</small><ChevronRight size={14} /></div><div><Settings size={16} /><span>Preferences</span><small>Music, vibe, cuisine</small><ChevronRight size={14} /></div></div><div className="clout-plus"><Crown size={20} fill="currentColor" /><div><b>CLOUT+</b><small>Priority entry. Better nights.</small></div><ChevronRight size={16} /></div><PhoneNav active="Profile" /></div>;
-}
-function ClockIcon() { return <span className="clock-icon">◷</span>; }
 
 export default function Home() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [bookingOpen, setBookingOpen] = useState(false);
-  const [selectedVenue, setSelectedVenue] = useState<Venue>(venues[0]);
-  const [party, setParty] = useState(2);
-  const [confirmation, setConfirmation] = useState<string | null>(null);
-  const reservation = trpc.reservation.create.useMutation({ onSuccess: data => setConfirmation(data.confirmationCode), onError: () => toast.error("Something interrupted the plan. Try again.") });
+  const [activeFilter, setActiveFilter] = useState("All");
+  const visibleGigs = useMemo(() => activeFilter === "All" ? gigs : gigs.filter(gig => gig.type === activeFilter), [activeFilter]);
 
-  const openBooking = (venue = venues[0]) => { setSelectedVenue(venue); setConfirmation(null); setBookingOpen(true); };
-  const scrollTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); setMobileOpen(false); };
+  return (
+    <main className="talent-app">
+      <section className="gold-hero" id="top">
+        <img className="gold-hero-image" src={media.hero} alt="Clout talent and creators arriving at a luxury nightlife venue" />
+        <div className="gold-hero-shade" />
+        <div className="gold-spark gold-spark-one" /><div className="gold-spark gold-spark-two" />
+        <nav className="gold-nav container">
+          <a className="gold-logo-link" href="#top" aria-label="Clout home"><Logo /></a>
+          <div className="gold-links"><a href="#opportunities">Opportunities</a><a href="#how-it-works">How it works</a><a href="#bookings">For venues</a></div>
+          <a className="gold-nav-cta" href="/join">Join the talent <ArrowRight size={15} /></a>
+        </nav>
+        <div className="container gold-hero-copy">
+          <p className="gold-eyebrow">TALENT <span /> INFLUENCERS <span /> ENTERTAINERS <span /> MODELS</p>
+          <h1>Turn your influence<br /><em>into dollars.</em></h1>
+          <p className="gold-lede">Get discovered for the city’s best nightlife, hospitality, creator, and entertainment opportunities.</p>
+          <div className="gold-hero-actions"><a href="#opportunities" className="gold-button">Explore paid gigs <ArrowRight size={17} /></a><a href="/join" className="gold-text-button">Build your profile <ArrowRight size={15} /></a></div>
+          <div className="gold-proof"><span><BadgeDollarSign /> Paid opportunities</span><span><MapPin /> Local bookings</span><span><UsersRound /> Premium venues</span></div>
+        </div>
+        <p className="hero-side-script">Get booked.<br />Get paid.<br />Grow your brand.</p>
+      </section>
 
-  return <main className="reference-app">
-    <section className="reference-hero" id="home">
-      <img className="hero-photo" src={media.hero} alt="Friends enjoying an upscale violet and blue club night" />
-      <div className="hero-darken" /><div className="hero-vignette" />
-      <nav className="reference-nav container"><button className="brand-button" onClick={() => scrollTo("home")}><Logo /></button><div className="reference-links"><button onClick={() => scrollTo("people")}>People</button><button onClick={() => scrollTo("places")}>Places</button><button onClick={() => scrollTo("plans")}>Plans</button><a href="/join">Join the team</a></div><div className="reference-nav-line" /><button className="nav-list-button" onClick={() => openBooking()}>Get on the list <ArrowRight size={14} /></button><button className="mobile-toggle" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X /> : <Menu />}</button></nav>
-      {mobileOpen && <div className="reference-mobile-nav"><button onClick={() => scrollTo("people")}>People</button><button onClick={() => scrollTo("places")}>Places</button><button onClick={() => scrollTo("plans")}>Plans</button><a href="/join">Join the team</a><Button onClick={() => openBooking()}>Get on the list <ArrowRight size={14} /></Button></div>}
-      <div className="container reference-hero-copy"><h1>Make the<br /><em>night yours.</em></h1><p>Find the people, places and moments<br />worth showing up for.</p><div className="hero-pillars"><span><UsersRound /> Real People</span><span><MapPin /> Amazing Places</span><span><CalendarDays /> Effortless Plans</span></div></div><p className="hero-script">Good<br />People<br />Brighter<br />Nights</p>
-    </section>
+      <section className="talent-marquee"><div><span>Nightlife bookings</span><i /> <span>Restaurant visits</span><i /> <span>Club hosting</span><i /> <span>Birthday parties</span><i /> <span>Brand deals</span><i /> <span>Venue bookings</span></div></section>
 
-    <section className="app-story" id="places"><div className="container"><div className="story-intro"><p className="section-kicker"><Sparkles size={13} /> One app. The whole night.</p><h2>From the group chat<br />to <em>the moment.</em></h2><p>Clout turns spontaneous plans into a city that feels like it already knows your name.</p></div><div className="phone-gallery"><div className="phone-column"><TonightPhone onBook={() => openBooking(venues[0])} /><div className="phone-caption"><b>Tonight</b><p>See what’s happening now.</p></div></div><div className="phone-column"><ExplorePhone onBook={() => openBooking(venues[1])} /><div className="phone-caption"><b>Explore</b><p>Discover the best places near you.</p></div></div><div className="phone-column feature-phone"><VenuePhone onBook={() => openBooking(venues[0])} /><div className="phone-caption"><b>Venue details</b><p>Know the energy before you go.</p></div></div><div className="phone-column"><CrewPhone onBook={() => openBooking(venues[0])} /><div className="phone-caption"><b>Clout</b><p>See who’s going out. Go together.</p></div></div><div className="phone-column"><ProfilePhone /><div className="phone-caption"><b>Profile</b><p>Your nights. Your story.</p></div></div></div></div></section>
+      <section className="talent-opportunities" id="opportunities">
+        <div className="container opportunity-grid">
+          <div className="opportunity-intro"><p className="gold-section-kicker"><Sparkles size={14} /> YOUR NEXT MOVE</p><h2>Book work that<br /><em>fits your clout.</em></h2><p>One place to find the rooms, brands, and experiences that are ready to pay for your energy and audience.</p><div className="opportunity-metrics"><div><b>350+</b><span>weekly openings</span></div><div><b>4.9</b><span>talent rating</span></div><div><b>24h</b><span>average review</span></div></div></div>
+          <div className="opportunity-photo"><img src={media.table} alt="A VIP nightlife table celebration" /><div className="opportunity-photo-shade" /><div className="opportunity-floating"><Crown size={18} fill="currentColor" /><div><b>Clout Select</b><small>Vetted bookings. Better rooms.</small></div></div></div>
+        </div>
+      </section>
 
-    <section className="people-section" id="people"><div className="container people-inner"><div><p className="section-kicker"><MessageCircleHeart size={13} /> Made for your people</p><h2>Same energy.<br /><em>Better stories.</em></h2><p>Connection stays intentional: see the crew, build a plan, and find the room that feels right—without making the night complicated.</p></div><div className="people-visual"><img src={media.friends} alt="Friends posing together at a club" /><div className="people-overlay" /><div className="people-note"><AvatarRow /><span>18 friends are out tonight</span><button onClick={() => openBooking()}>Tap in <ArrowRight size={13} /></button></div></div></div></section>
+      <section className="gig-section" id="bookings">
+        <div className="container"><div className="gig-heading"><div><p className="gold-section-kicker"><WalletCards size={14} /> LIVE OPPORTUNITIES</p><h2>Available gigs<br /><em>near you.</em></h2></div><a href="/join" className="gold-outline-link">Create your talent profile <ArrowRight size={15} /></a></div><div className="gig-filter-row">{filters.map(filter => <button key={filter} className={activeFilter === filter ? "active" : ""} onClick={() => setActiveFilter(filter)}>{filter}</button>)}</div><div className="gig-card-grid">{visibleGigs.map(gig => { const Icon = gig.icon; return <article className="gig-card" key={gig.title}><div className="gig-image"><img src={gig.image} alt="" /><span><Icon size={15} /></span><p>{gig.type}</p></div><div className="gig-card-body"><div><h3>{gig.title}</h3><p><MapPin size={13} /> {gig.venue}</p></div><strong>{gig.pay}</strong></div><a href={`/join?role=${encodeURIComponent(gig.type)}`} className="gig-apply">Apply now <ArrowRight size={15} /></a></article>})}</div></div>
+      </section>
 
-    <section className="membership-reference" id="plans"><div className="container membership-reference-grid"><div className="membership-copy"><p className="section-kicker"><Crown size={13} /> Memberships</p><h2>A little more<br /><em>Clout goes far.</em></h2><p>More access. More nights. More you.</p></div><div className="reference-plan-grid">{plans.map((plan, index) => <article key={plan.name} className={index === 1 ? "featured" : ""}>{index === 1 && <span className="popular">Most popular</span>}<h3>{plan.name}</h3><b>{plan.price}<small>/mo</small></b><ul>{plan.perks.map(perk => <li key={perk}><Check size={13} /> {perk}</li>)}</ul><Button variant={index === 1 ? "default" : "outline"} onClick={() => openBooking()}>{index === 0 ? "Get Started" : `Choose ${plan.name}`} <ArrowRight size={14} /></Button></article>)}</div><div className="download-card"><Logo /><p>Same energy.<br />Different city.</p><div className="store-pills"><button onClick={() => toast.info("Mobile apps are next on the Clout roadmap.")}>● <span>Download on the<br /><b>App Store</b></span></button><button onClick={() => toast.info("Mobile apps are next on the Clout roadmap.")}>▶ <span>Get it on<br /><b>Google Play</b></span></button></div><small>HOUSTON · NEW YORK · MIAMI · ATLANTA<br />AND BEYOND.</small></div></div></section>
+      <section className="talent-app-showcase"><div className="container showcase-grid"><div className="showcase-phone-wrap"><div className="gold-ring" /><PhoneMock /></div><div className="showcase-copy"><p className="gold-section-kicker"><Crown size={14} fill="currentColor" /> THE CLOUT APP</p><h2>It’s more than<br /><em>a night out.</em></h2><p>Open one app to discover paid opportunities, manage applications, message venues, and keep your earnings in view.</p><div className="showcase-list"><span><BadgeDollarSign size={18} /><b>New revenue for talent</b><small>Make money from your influence and creativity.</small></span><span><CalendarDays size={18} /><b>Bookings in one place</b><small>Apply, confirm, and show up prepared.</small></span><span><Star size={18} /><b>Grow with every gig</b><small>Build a stronger local reputation.</small></span></div><a href="/join" className="gold-button">Join Clout today <ArrowRight size={17} /></a></div></div></section>
 
-    <footer className="reference-footer"><div className="container"><Logo /><span>Clout is where the plan becomes the story.</span><button onClick={() => openBooking()}>Make a plan <ArrowRight size={14} /></button></div></footer>
+      <section className="steps-section" id="how-it-works"><div className="container"><p className="gold-section-kicker centered"><Sparkles size={14} /> EASY STEPS TO START MAKING MONEY</p><h2>Four moves.<br /><em>Your next opportunity.</em></h2><div className="step-grid"><article><b>01</b><Crown size={21} /><h3>Join Clout</h3><p>Create a profile that puts your personality, availability, and talents in the right rooms.</p></article><article><b>02</b><UsersRound size={21} /><h3>Choose your lane</h3><p>Host, create, influence, entertain, cook, or work the door—your talent belongs here.</p></article><article><b>03</b><CalendarDays size={21} /><h3>Apply to gigs</h3><p>Find the opportunity, make your move, and get in front of verified venue teams.</p></article><article><b>04</b><BadgeDollarSign size={21} /><h3>Get booked &amp; paid</h3><p>Build momentum locally, turn up professionally, and grow your own brand.</p></article></div></div></section>
 
-    <Dialog open={bookingOpen} onOpenChange={setBookingOpen}><DialogContent className="reference-booking" aria-describedby={undefined}>{confirmation ? <div className="reference-success"><div><Check size={28} /></div><p className="section-kicker">You’re on the list</p><h2>See you<br /><em>tonight.</em></h2><p>Your place at <b>{selectedVenue.name}</b> is confirmed. The night is officially in motion.</p><span className="confirmation">{confirmation}</span><Button onClick={() => setBookingOpen(false)}>Back to Clout <ArrowRight size={15} /></Button></div> : <form onSubmit={event => { event.preventDefault(); const form = new FormData(event.currentTarget); reservation.mutate({ venueId: selectedVenue.id, venueName: selectedVenue.name, customerName: String(form.get("name")), email: String(form.get("email")), phone: String(form.get("phone") || ""), reservationDate: String(form.get("date")), reservationTime: "21:30", partySize: party, serviceName: "Guest List", membershipTier: "Clout", addOns: [], subtotalCents: selectedVenue.price * 100, benefitCents: 2500, totalCents: Math.max(selectedVenue.price - 25, 0) * 100, referralCode: "" }); }}><div className="booking-visual"><img src={selectedVenue.image} alt="" /><div /><span>Tonight in Houston</span><h3>{selectedVenue.name}</h3><p>{selectedVenue.location}</p></div><div className="booking-form"><p className="section-kicker">Make a plan</p><h2>Get on the<br /><em>list.</em></h2><div className="venue-select">{venues.map(venue => <button type="button" onClick={() => setSelectedVenue(venue)} className={venue.id === selectedVenue.id ? "selected" : ""} key={venue.id}><img src={venue.image} alt="" /><span><b>{venue.name}</b><small>{venue.location}</small></span><Check size={13} /></button>)}</div><div className="booking-fields"><div><Label htmlFor="guest-name">Your name</Label><Input id="guest-name" name="name" placeholder="Jordan Taylor" required /></div><div><Label htmlFor="guest-email">Email</Label><Input id="guest-email" name="email" type="email" placeholder="jordan@example.com" required /></div><div><Label htmlFor="guest-date">Date</Label><Input id="guest-date" name="date" type="date" defaultValue="2026-09-26" required /></div><div><Label>Guests</Label><div className="guest-counter"><button type="button" onClick={() => setParty(Math.max(1, party - 1))}>−</button><b>{party}</b><button type="button" onClick={() => setParty(Math.min(20, party + 1))}>+</button></div></div><div className="span-two"><Label htmlFor="guest-phone">Phone <small>(optional)</small></Label><Input id="guest-phone" name="phone" placeholder="(713) 555-0123" /></div></div><div className="booking-total"><span>Clout credit applied</span><b>{`$${Math.max(selectedVenue.price - 25, 0)}`}</b></div><Button type="submit" disabled={reservation.isPending}>{reservation.isPending ? "Locking it in…" : "Join Guest List"} <ArrowRight size={15} /></Button><small className="booking-disclaimer"><ShieldCheck size={12} /> Demo reservation only. No payment is processed.</small></div></form>}</DialogContent></Dialog>
-  </main>;
+      <section className="gold-cta"><img src={media.hero} alt="" /><div /><div className="container"><p className="gold-section-kicker"><Crown size={14} fill="currentColor" /> YOUR CITY IS CALLING</p><h2>Real bookings.<br /><em>Real income.</em></h2><p>Same night. Bigger opportunities.</p><a href="/join" className="gold-button">Download Clout app today <ArrowRight size={18} /></a></div></section>
+
+      <footer className="gold-footer"><div className="container"><Logo /><span>© 2026 Clout. Make influence work harder.</span><a href="/join">Join the talent <ArrowRight size={14} /></a></div></footer>
+    </main>
+  );
 }

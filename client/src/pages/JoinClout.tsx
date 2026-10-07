@@ -7,10 +7,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 
-const heroImage = "/manus-storage/clout-crowd-hero_bf7b39f6.jpg";
+const heroImage = "/manus-storage/clout-gold-hero_236c24f3.jpg";
 const ndaVersion = "CLOUT-NDA-2026-10-06";
 const roles = ["Host / Guest Experience", "Promoter / Clout Representative", "Server / Bottle Service", "Cook / Chef", "Security / Door Team", "Venue Operations", "Creator / Content Team"];
 const venues = ["Noir Social House · Houston", "The Violet Room · Houston", "Afterglow Rooftop · Houston", "Open to the Clout network"];
+const roleFromGig = {
+  Hosting: "Host / Guest Experience",
+  Influencer: "Promoter / Clout Representative",
+  Entertainment: "Creator / Content Team",
+  Creator: "Creator / Content Team",
+  Hospitality: "Cook / Chef",
+} as const;
 
 function Mark() {
   return <span className="join-mark">C</span>;
@@ -36,7 +43,10 @@ function NdaTerms() {
 }
 
 export default function JoinClout() {
-  const [roleInterest, setRoleInterest] = useState(roles[0]);
+  const [roleInterest, setRoleInterest] = useState(() => {
+    const selectedGigType = new URLSearchParams(window.location.search).get("role") as keyof typeof roleFromGig | null;
+    return selectedGigType ? roleFromGig[selectedGigType] : roles[0];
+  });
   const [preferredVenue, setPreferredVenue] = useState(venues[0]);
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [ndaSignature, setNdaSignature] = useState("");
@@ -70,10 +80,10 @@ export default function JoinClout() {
       <nav className="join-nav"><a href="/" aria-label="Back to Clout"><Mark /><span>CLOUT</span></a><a className="join-back" href="/"><ArrowLeft size={14} /> Back to the night</a></nav>
       <section className="join-layout">
         <div className="join-copy">
-          <p className="join-kicker"><Sparkles size={13} /> JOIN THE TEAM</p>
-          <h1>Help create<br /><em>brighter nights.</em></h1>
-          <p>Clout is building the social layer for hospitality. We’re looking for people who know how to make every guest feel like they belong in the room.</p>
-          <div className="join-value-list"><div><UsersRound size={18} /><span><b>Build the culture</b><small>Bring your energy to hospitality that remembers people.</small></span></div><div><Crown size={18} /><span><b>Grow with the network</b><small>Opportunities across venues, events and markets.</small></span></div><div><ShieldCheck size={18} /><span><b>Start with a conversation</b><small>Apply first. We match the right people to the right role.</small></span></div></div>
+          <p className="join-kicker"><Sparkles size={13} /> JOIN THE TALENT</p>
+          <h1>Turn your talent<br /><em>into income.</em></h1>
+          <p>Clout connects creators, hospitality professionals, and entertainers to paid opportunities at the city’s most exciting venues and events.</p>
+          <div className="join-value-list"><div><UsersRound size={18} /><span><b>Get discovered locally</b><small>Put your energy and experience in front of verified venue teams.</small></span></div><div><Crown size={18} /><span><b>Apply to paid gigs</b><small>Find hosting, creator, hospitality, and entertainment opportunities.</small></span></div><div><ShieldCheck size={18} /><span><b>Build your reputation</b><small>Show up, earn more, and grow your brand with every booking.</small></span></div></div>
           <div className="join-qr-callout"><div className="join-qr-image"><img src="/manus-storage/join-clout-qr_04134b26.png" alt="QR code that opens the Join Clout employee application" /></div><div><p className="join-kicker">MOBILE APPLICATION</p><b>Scan to join from your phone.</b><small>Point your camera at the code to open the Clout team application instantly.</small><code>clouthospl-pbvuouvk.manus.space/join</code></div></div>
         </div>
         <form className="join-form" onSubmit={event => {
