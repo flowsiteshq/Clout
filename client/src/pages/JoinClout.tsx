@@ -29,7 +29,7 @@ function NdaTerms() {
         <section><b>5. Required Disclosures and Remedies.</b><p>If disclosure is required by law, Candidate will give prompt written notice where legally permitted and disclose only what is required. Candidate acknowledges that unauthorized disclosure may cause irreparable harm and that the Company may seek equitable relief in addition to other available remedies.</p></section>
         <section><b>6. No Employment Promise.</b><p>This Agreement does not create an offer of employment, contractor relationship, exclusivity, or any obligation for either party to enter into a future relationship.</p></section>
         <section><b>7. Governing Law and Electronic Signature.</b><p>Texas law governs this Agreement, without regard to conflict-of-law rules. Candidate agrees that checking the consent box and typing a full legal name below is an electronic signature and record with the same intent and effect as a handwritten signature, to the extent permitted by applicable law.</p></section>
-        <p className="nda-version">Version {ndaVersion} · Please have counsel review this template and confirm the Company’s legal entity before production use.</p>
+        <p className="nda-version">Agreement version {ndaVersion}</p>
       </article>
     </details>
   );
