@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 
-const heroImage = "/manus-storage/clout-gold-hero_236c24f3.jpg";
+const heroImage = "/manus-storage/clout-ai-night_4a3107ad.jpg";
 const ndaVersion = "CLOUT-NDA-2026-10-06";
 const roles = ["Host / Guest Experience", "Promoter / Clout Representative", "Server / Bottle Service", "Cook / Chef", "Security / Door Team", "Venue Operations", "Creator / Content Team"];
 const venues = ["Noir Social House · Houston", "The Violet Room · Houston", "Afterglow Rooftop · Houston", "Open to the Clout network"];
