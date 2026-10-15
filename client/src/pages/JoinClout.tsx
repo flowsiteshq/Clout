@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 
-const heroImage = "/manus-storage/clout-ai-night_4a3107ad.jpg";
+const heroImage = "/manus-storage/clout-ai-night-black-led_c80b9c40.jpg";
 const ndaVersion = "CLOUT-NDA-2026-10-06";
 const roles = ["Host / Guest Experience", "Promoter / Clout Representative", "Server / Bottle Service", "Cook / Chef", "Security / Door Team", "Venue Operations", "Creator / Content Team"];
 const venues = ["Noir Social House · Houston", "The Violet Room · Houston", "Afterglow Rooftop · Houston", "Open to the Clout network"];
@@ -19,8 +19,8 @@ const roleFromGig = {
   Hospitality: "Cook / Chef",
 } as const;
 
-function Mark() {
-  return <span className="join-mark">C</span>;
+function Logo() {
+  return <img className="join-official-logo" src="/manus-storage/0f3d458e-3e78-4482-b68e-ad76925226a8_58f87301.png" alt="Clout Digital Experience" />;
 }
 
 function NdaTerms() {
@@ -77,7 +77,7 @@ export default function JoinClout() {
     <main className="join-page">
       <img className="join-bg" src={heroImage} alt="" />
       <div className="join-shade" />
-      <nav className="join-nav"><a href="/" aria-label="Back to Clout"><Mark /><span>CLOUT</span></a><a className="join-back" href="/"><ArrowLeft size={14} /> Back to the night</a></nav>
+      <nav className="join-nav"><a href="/" aria-label="Back to Clout"><Logo /></a><a className="join-back" href="/"><ArrowLeft size={14} /> Back to the night</a></nav>
       <section className="join-layout">
         <div className="join-copy">
           <p className="join-kicker"><Sparkles size={13} /> JOIN THE TALENT</p>

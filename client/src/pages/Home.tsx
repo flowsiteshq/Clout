@@ -2,82 +2,138 @@ import { useState } from "react";
 import {
   ArrowRight,
   CalendarDays,
+  Check,
   ChevronRight,
+  CirclePlay,
   Crown,
+  Diamond,
+  Eye,
+  Gift,
   Heart,
   MapPin,
   MessageCircleHeart,
+  Search,
   ShieldCheck,
   Sparkles,
-  Stars,
+  Star,
+  Ticket,
   UsersRound,
-  WandSparkles,
+  Video,
+  WalletCards,
+  X,
 } from "lucide-react";
 
+const logo = "/manus-storage/0f3d458e-3e78-4482-b68e-ad76925226a8_58f87301.png";
 const media = {
-  hero: "/manus-storage/clout-ai-night-black-led_c80b9c40.jpg",
-  creator: "/manus-storage/clout-ai-creator_b2618bde.jpg",
-  venue: "/manus-storage/clout-ai-venue_f12b8d67.jpg",
+  hero: "/manus-storage/clout-luxury-hero-web_879f5e81.jpg",
+  violet: "/manus-storage/clout-violet-saturdays-web_ba0d388b.jpg",
+  penthouse: "/manus-storage/clout-penthouse-web_4f9bb0cf.jpg",
+  dinner: "/manus-storage/clout-dinner-after-dark-web_3f2ae39a.jpg",
+  houston: "/manus-storage/clout-houston-destination-web_4344a466.jpg",
 };
 
-const nights = [
-  { title: "Violet Saturdays", venue: "Noir Social House", time: "Tonight · 10:30 PM", tag: "High energy", image: media.hero },
-  { title: "Dinner after dark", venue: "Mila Social", time: "Tonight · 8:15 PM", tag: "Tables moving", image: media.venue },
-  { title: "The penthouse hour", venue: "Afterglow Rooftop", time: "Tonight · 11:00 PM", tag: "Your kind of crowd", image: media.creator },
+const experiences = [
+  { title: "Violet Saturdays", eyebrow: "SIGNATURE NIGHT", copy: "Music, movement, and a room that knows how to come alive.", image: media.violet },
+  { title: "The Penthouse", eyebrow: "VIP EXPERIENCE", copy: "Private rooms, elevated energy, and space for the night to unfold.", image: media.penthouse },
+  { title: "Dinner After Dark", eyebrow: "DINNER & NIGHTLIFE", copy: "Dine, drink, and follow the energy wherever it takes you.", image: media.dinner },
+  { title: "Exclusive VIP Events", eyebrow: "MEMBERS-ONLY", copy: "Invitation-only moments designed for the Clout community.", image: media.houston },
 ];
 
-const moments = [
-  { title: "Book a table", copy: "Reserve the moment without the group-text spiral.", icon: CalendarDays, action: "Start a plan" },
-  { title: "Request a host", copy: "Add the right energy to the room, the night, or the launch.", icon: Crown, action: "Find a host" },
-  { title: "Bring your crew", copy: "Share the plan, collect the yeses, and arrive together.", icon: UsersRound, action: "Create a crew" },
+const plans = [
+  {
+    name: "Social Clout", price: "Free", accent: "social", benefits: ["Pre-admission payment", "Event booking & special reservations", "Public club menu access"],
+  },
+  {
+    name: "Clout Membership", price: "$99.99", suffix: "/ month", accent: "clout", benefits: ["25 communication coins", "VIP table booking access", "Valet reservation access"],
+  },
+  {
+    name: "Mega Clout", price: "$299", suffix: "/ month", accent: "mega", benefits: ["50 signing bonus communication coins", "Priority VIP table booking", "Priority entertainer reserve"],
+  },
+  {
+    name: "Ultra Clout", price: "$499", suffix: "/ month", accent: "ultra", benefits: ["100 signing bonus communication coins", "Private event invites", "Priority VIP entry"],
+  },
+  {
+    name: "Boss Clout", price: "$1,000", suffix: "/ month", accent: "boss", benefits: ["150 signing bonus communication coins", "Private Clout event invites", "Gold Check verification availability"],
+  },
 ];
 
-function Mark() {
-  return <span className="clout-mark">C</span>;
+function Logo({ footer = false }: { footer?: boolean }) {
+  return <img className={footer ? "lux-logo lux-logo-footer" : "lux-logo"} src={logo} alt="Clout Digital Experience" />;
 }
 
-function Logo() {
-  return <span className="clout-logo"><Mark /><b>CLOUT</b></span>;
+function PhonePreview({ type }: { type: "discover" | "live" }) {
+  const live = type === "live";
+  return (
+    <div className={`lux-phone ${live ? "lux-phone-live" : ""}`} aria-label={live ? "Clout live experience preview" : "Clout discovery experience preview"}>
+      <span className="lux-phone-island" />
+      <div className="lux-phone-top"><img src={logo} alt="" /><span>{live ? "LIVE" : "9:41"}</span></div>
+      {live ? <>
+        <img className="lux-phone-cover" src={media.dinner} alt="" />
+        <div className="lux-live-pill"><i /> LIVE · THE VIOLET ROOM</div>
+        <div className="lux-live-comments"><span><b>Renee S.</b> This energy is everything.</span><span><b>J. Taylor</b> Save me a spot.</span></div>
+        <div className="lux-phone-reactions"><Heart size={15} fill="currentColor" /><Gift size={15} /><MessageCircleHeart size={15} /></div>
+      </> : <>
+        <p className="lux-phone-label">DISCOVER</p>
+        <div className="lux-phone-search"><Search size={13} /> Search places, events, or people</div>
+        <div className="lux-phone-tabs"><span className="active">For you</span><span>Events</span><span>VIP</span></div>
+        <img className="lux-phone-cover" src={media.violet} alt="" />
+        <div className="lux-phone-event"><span>TONIGHT</span><b>Violet Saturdays</b><small>Houston · Members can request access</small></div>
+        <div className="lux-phone-people"><img src={media.dinner} alt="" /><div><b>People you may know</b><small>Connect before the night starts</small></div><ChevronRight size={14} /></div>
+      </>}
+      <div className="lux-phone-nav"><span className={!live ? "active" : ""}>Home</span><span>Explore</span><span className={live ? "active" : ""}>Live</span><span>Profile</span></div>
+    </div>
+  );
 }
 
 export default function Home() {
   const [saved, setSaved] = useState<string[]>([]);
-  const toggleSave = (name: string) => setSaved(current => current.includes(name) ? current.filter(item => item !== name) : [...current, name]);
+  const [selectedPlan, setSelectedPlan] = useState("Clout Membership");
+  const [locationsOpen, setLocationsOpen] = useState(false);
+  const toggleSaved = (title: string) => setSaved(current => current.includes(title) ? current.filter(item => item !== title) : [...current, title]);
 
   return (
-    <main className="clout-site">
-      <section className="consumer-hero" id="top">
-        <img className="consumer-hero-image" src={media.hero} alt="Friends enjoying a colorful upscale night out" />
-        <div className="consumer-hero-shade" />
-        <div className="hero-orb orb-one" /><div className="hero-orb orb-two" />
-        <nav className="consumer-nav container">
-          <a href="#top" aria-label="Clout home"><Logo /></a>
-          <div className="consumer-links"><a href="#tonight">Tonight</a><a href="#create">Create your night</a><a href="#ecosystem">For partners</a></div>
-          <div className="consumer-nav-actions"><a href="/night" className="nav-text-link">My night</a><a href="/join" className="nav-pill">Join Clout <ArrowRight size={14} /></a></div>
+    <main className="lux-home">
+      <section className="lux-hero" id="top">
+        <img className="lux-hero-photo" src={media.hero} alt="Stylish guests arriving for a luxury Houston nightlife experience" />
+        <div className="lux-hero-shade" />
+        <div className="lux-hero-glow" />
+        <nav className="lux-nav container">
+          <a className="lux-logo-link" href="#top" aria-label="Clout home"><Logo /></a>
+          <div className="lux-nav-links"><a href="#experiences">Experiences</a><a href="#events">Events</a><a href="#app">The app</a><a href="#locations">Locations</a><a href="#membership">Membership</a></div>
+          <div className="lux-nav-actions"><a href="/night">My night</a><a className="lux-login" href="/talent">Talent portal</a><a className="lux-join" href="#membership">Join Clout <ArrowRight size={13} /></a></div>
         </nav>
-        <div className="container consumer-hero-copy">
-          <p className="eyebrow"><Sparkles size={13} /> CL OUT AI · HOUSTON AFTER DARK</p>
+        <div className="container lux-hero-copy">
+          <p className="lux-eyebrow">HOUSTON, TX <i /> DIGITAL MEETS REAL LIFE</p>
           <h1>Make the<br /><em>night yours.</em></h1>
-          <p className="hero-copy">The people, places, and plans worth showing up for—organized around your energy, your crew, and your city.</p>
-          <div className="hero-actions"><a href="#tonight" className="violet-button">See tonight <ArrowRight size={16} /></a><a href="#create" className="ghost-link">Create a plan <ArrowRight size={15} /></a></div>
-          <div className="hero-trust"><span><UsersRound size={17} /> Your people, in the loop</span><span><MapPin size={17} /> The right place, right now</span><span><CalendarDays size={17} /> Plans that actually happen</span></div>
+          <p>Exclusive people. Extraordinary experiences.</p>
+          <span>Book tables, connect with entertainers, access members-only events, and experience premium nightlife in person and through the Clout app.</span>
+          <div className="lux-hero-buttons"><a className="lux-gold-button" href="#membership">Join Clout <ArrowRight size={15} /></a><a className="lux-watch-button" href="#experiences"><CirclePlay size={17} /> Watch the experience</a></div>
         </div>
-        <div className="hero-ai-card"><span><WandSparkles size={15} /> CLOUT AI PICK</span><b>“Start at Mila, then move to Noir around 10:30.”</b><small>Built around your saved places, crew, and tonight’s energy.</small></div>
+        <div className="container lux-hero-features"><span><Crown size={17} /> Exclusive events</span><span><Video size={17} /> Live streams</span><span><CalendarDays size={17} /> Book entertainers</span><span><Diamond size={17} /> VIP access</span></div>
       </section>
 
-      <section className="night-strip"><div><span>REAL PEOPLE</span><i /> <span>AMAZING PLACES</span><i /> <span>EFFORTLESS PLANS</span><i /> <span>BRIGHTER NIGHTS</span></div></section>
+      <section className="lux-experience" id="experiences">
+        <div className="container"><div className="lux-section-lead"><div><p className="lux-eyebrow">THE EXPERIENCE</p><h2>Your city<br />has <em>a pulse.</em></h2></div><div><p>Clout brings the best of nightlife, entertainment, and digital experiences together. Discover events, book your crew, and find the moments that move you.</p><a className="lux-gold-button small" href="#events">Explore events <ArrowRight size={14} /></a></div></div>
+        <div className="lux-experience-grid" id="events">{experiences.map((experience, index) => <article className={`lux-experience-card card-${index + 1}`} key={experience.title}><img src={experience.image} alt="" /><div className="lux-experience-overlay" /><button onClick={() => toggleSaved(experience.title)} className={saved.includes(experience.title) ? "saved" : ""} aria-label={`Save ${experience.title}`}><Heart size={16} fill={saved.includes(experience.title) ? "currentColor" : "none"} /></button><div><p>{experience.eyebrow}</p><h3>{experience.title}</h3><span>{experience.copy}</span><a href="/night">Request access <ArrowRight size={14} /></a></div></article>)}</div></div>
+      </section>
 
-      <section className="tonight-section" id="tonight"><div className="container"><div className="section-heading"><div><p className="eyebrow"><Stars size={13} /> TONIGHT, CURATED</p><h2>Your city has<br /><em>a pulse.</em></h2></div><p>Clout shows the rooms where the music is right, your people are moving, and the night is becoming a story.</p></div><div className="night-card-grid">{nights.map((night, index) => <article className={`night-card card-${index + 1}`} key={night.title}><img src={night.image} alt="" /><div className="night-card-shade" /><button className={saved.includes(night.title) ? "saved" : ""} onClick={() => toggleSave(night.title)} aria-label={`Save ${night.title}`}><Heart size={17} fill={saved.includes(night.title) ? "currentColor" : "none"} /></button><div className="night-card-copy"><p>{night.tag}</p><h3>{night.title}</h3><span>{night.venue} <i /> {night.time}</span><a href="/night">See the details <ArrowRight size={14} /></a></div></article>)}</div></div></section>
+      <section className="lux-membership" id="membership">
+        <div className="container"><div className="lux-membership-lead"><div><p className="lux-eyebrow">MEMBERSHIP TIERS</p><h2>More access.<br />More <em>experiences.</em></h2></div><p>Choose the level of access that fits how you move. Membership benefits and availability are applied by location and experience.</p></div>
+        <div className="lux-plan-grid">{plans.map((plan, index) => <article className={`lux-plan ${plan.accent} ${selectedPlan === plan.name ? "selected" : ""}`} key={plan.name}><div className="lux-plan-icon">{index === 4 ? <Crown size={18} /> : index === 3 ? <Diamond size={18} /> : <Sparkles size={18} />}</div><p>{plan.name}</p><b>{plan.price}<small>{plan.suffix}</small></b><ul>{plan.benefits.map(benefit => <li key={benefit}><Check size={13} /> {benefit}</li>)}</ul><button onClick={() => setSelectedPlan(plan.name)}>{selectedPlan === plan.name ? "Selected" : "Explore tier"} <ArrowRight size={14} /></button></article>)}</div>
+        <p className="lux-membership-note"><ShieldCheck size={14} /> You’re exploring <b>{selectedPlan}</b>. Experience access, booking availability, and benefits are confirmed in your member profile.</p></div>
+      </section>
 
-      <section className="create-section" id="create"><div className="container create-layout"><div className="create-copy"><p className="eyebrow"><WandSparkles size={13} /> A NIGHT, MADE FOR YOU</p><h2>Less planning.<br /><em>More living.</em></h2><p>Tell Clout what kind of night you want. It puts the place, people, and moments into one smooth plan—so the group chat finally has a destination.</p><a href="/night" className="violet-button">Build my night <ArrowRight size={16} /></a></div><div className="plan-console"><div className="console-head"><div><span>Tonight’s plan</span><b>Friday in Houston</b></div><button><Sparkles size={14} /> Refresh</button></div><div className="console-vibe"><span>VIBE</span><div><button className="active">Elevated</button><button>Social</button><button>Unplanned</button></div></div><div className="plan-steps"><div><i>01</i><span><b>Dinner</b><small>Mila Social · 8:15 PM</small></span><ChevronRight size={15} /></div><div><i>02</i><span><b>Meet the crew</b><small>4 friends confirmed · 9:45 PM</small></span><ChevronRight size={15} /></div><div><i>03</i><span><b>Nightcap</b><small>Noir Social House · 10:30 PM</small></span><ChevronRight size={15} /></div></div><a href="/night">Open my night <ArrowRight size={15} /></a></div></div></section>
+      <section className="lux-app-section" id="app"><div className="container lux-app-grid"><div className="lux-app-copy"><p className="lux-eyebrow">THE CLOUT APP</p><h2>Clout<br /><em>on demand.</em></h2><p>Discover people and places, request services, watch live moments, and keep your next night close—wherever you are.</p><a className="lux-gold-button" href="/night">Explore the experience <ArrowRight size={15} /></a></div><div className="lux-phones"><PhonePreview type="discover" /><PhonePreview type="live" /></div><div className="lux-app-features"><span><Eye size={16} /> Model & entertainer profiles</span><span><Video size={16} /> Live streaming</span><span><MessageCircleHeart size={16} /> Coin-based messaging</span><span><CalendarDays size={16} /> Booking services</span><span><Gift size={16} /> In-app gifts</span><span><Ticket size={16} /> Event reservations</span><small>Product experience preview. App-store availability will be announced separately.</small></div></div></section>
 
-      <section className="moments-section"><div className="container"><div className="section-heading compact"><div><p className="eyebrow"><Crown size={13} /> MAKE IT A MOMENT</p><h2>It’s not about<br /><em>the price.</em></h2></div><p>Every booking starts with the experience you want. Details, availability, and the final cost are handled directly in the profile conversation.</p></div><div className="moment-grid">{moments.map(moment => { const Icon = moment.icon; return <article key={moment.title}><Icon size={22} /><h3>{moment.title}</h3><p>{moment.copy}</p><a href="/night">{moment.action} <ArrowRight size={14} /></a></article>})}</div></div></section>
+      <section className="lux-lifestyle"><img src={media.hero} alt="Stylish nightlife guest in Houston" /><div className="lux-lifestyle-shade" /><div className="container lux-lifestyle-content"><div><p className="lux-eyebrow">WHY CLOUT</p><h2>It’s more than<br />a night out.<br /><em>It’s a lifestyle.</em></h2><p>From exclusive events to unforgettable people, Clout is where nightlife, entertainment, and digital experiences come together.</p><a className="lux-gold-button small" href="#membership">Join the experience <ArrowRight size={14} /></a></div><div className="lux-pillars"><article><UsersRound size={22} /><b>Real people</b><span>Meaningful connections and unforgettable encounters.</span></article><article><MapPin size={22} /><b>Amazing places</b><span>Premium Houston nightlife experiences.</span></article><article><Crown size={22} /><b>Unforgettable nights</b><span>Exclusive digital and in-person entertainment.</span></article></div></div></section>
 
-      <section className="ai-story"><div className="container ai-story-layout"><div className="ai-image"><img src={media.creator} alt="Clout creator in a nightlife setting" /><div className="ai-image-glow" /><span><WandSparkles size={15} /> Clout AI signals</span></div><div className="ai-copy"><p className="eyebrow"><WandSparkles size={13} /> THE SOCIAL LAYER</p><h2>The night gets<br /><em>more personal.</em></h2><p>Clout AI learns the energy you return to, the rooms your crew loves, and the experiences you save—then makes discovery feel more like instinct.</p><div className="ai-notes"><span><Sparkles size={15} /> Picks based on your saved energy</span><span><MessageCircleHeart size={15} /> Crew-aware plans, not generic lists</span><span><ShieldCheck size={15} /> Thoughtful suggestions, on your terms</span></div></div></div></section>
+      <section className="lux-location" id="locations"><img src={media.houston} alt="Luxury Houston nightlife destination" /><div className="lux-location-shade" /><div className="container lux-location-content"><p className="lux-eyebrow">HOUSTON, TX</p><h2>Our home.<br /><em>Your playground.</em></h2><p>Houston is where the Clout story begins. Location listings are published only when a participating business is confirmed.</p><button className="lux-outline-button" onClick={() => setLocationsOpen(true)}>View locations <ArrowRight size={14} /></button><small><MapPin size={13} /> Confirmed partner locations will appear here as they go live.</small></div></section>
 
-      <section className="ecosystem-section" id="ecosystem"><div className="container"><div className="ecosystem-heading"><p className="eyebrow"><UsersRound size={13} /> ONE CITY, THREE EXPERIENCES</p><h2>Clout works because<br /><em>everybody belongs.</em></h2></div><div className="ecosystem-grid"><article className="ecosystem-card consumer"><span>01 · CONSUMERS</span><h3>Create your night.</h3><p>Discover places, build plans, request bookings, and keep the night moving.</p><a href="/night">Open my night <ArrowRight size={14} /></a></article><article className="ecosystem-card talent"><span>02 · TALENT &amp; SERVICES</span><h3>Build your profile.</h3><p>Creators, hosts, service professionals, and entertainers manage partnerships and requests.</p><a href="/talent">Explore talent portal <ArrowRight size={14} /></a></article><article className="ecosystem-card partner"><span>03 · HOSPITALITY &amp; VENDORS</span><h3>Run a better room.</h3><p>Venues and partners manage staffing, subscription access, demand, and the guest experience.</p><a href="/partner">Open partner portal <ArrowRight size={14} /></a></article></div><a className="ops-entry" href="/ops"><span><ShieldCheck size={16} /> CLOUT OPERATIONS</span><b>See staffing performance, guest spend, bookings, and tonight’s operating pulse.</b><ArrowRight size={17} /></a></div></section>
+      <section className="lux-final"><img src={media.penthouse} alt="Houston skyline and premium nightlife" /><div /><div className="container"><p className="lux-eyebrow">PEOPLE <i /> PLACES <i /> PARTIES <i /> POSSIBILITIES</p><h2>Step into the <em>experience.</em></h2><a className="lux-gold-button" href="#membership">Join Clout <ArrowRight size={15} /></a></div></section>
 
-      <footer className="clout-footer"><div className="container"><Logo /><span>Good people. Brighter nights.</span><div><a href="/talent">Talent</a><a href="/partner">Partners</a><a href="/ops">Operations</a></div></div></footer>
+      {locationsOpen && <div className="lux-location-dialog-backdrop" role="presentation" onClick={() => setLocationsOpen(false)}><section className="lux-location-dialog" role="dialog" aria-modal="true" aria-labelledby="locations-dialog-title" onClick={event => event.stopPropagation()}><button className="lux-dialog-close" onClick={() => setLocationsOpen(false)} aria-label="Close locations notice"><X size={17} /></button><MapPin size={23} /><p className="lux-eyebrow">HOUSTON LOCATIONS</p><h2 id="locations-dialog-title">The list is<br /><em>coming to life.</em></h2><p>We only publish participating locations after their availability is confirmed. Join Clout to receive the first location drops and event invitations.</p><a className="lux-gold-button" href="#membership" onClick={() => setLocationsOpen(false)}>Explore membership <ArrowRight size={14} /></a></section></div>}
+
+      <footer className="lux-footer"><div className="container"><Logo footer /><span>© 2026 Clout Digital Experience</span><div><a href="/talent">Talent & services</a><a href="/partner">Hospitality partners</a><a href="/ops">Operations</a></div></div></footer>
     </main>
   );
 }

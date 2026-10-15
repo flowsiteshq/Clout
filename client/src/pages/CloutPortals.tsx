@@ -39,8 +39,7 @@ const performanceData = [
   { day: "Mon", value: 29 }, { day: "Tue", value: 34 }, { day: "Wed", value: 32 }, { day: "Thu", value: 46 }, { day: "Fri", value: 58 }, { day: "Sat", value: 71 }, { day: "Sun", value: 64 },
 ];
 
-function Mark() { return <span className="clout-mark portal-mark">C</span>; }
-function Logo() { return <span className="clout-logo"><Mark /><b>CLOUT</b></span>; }
+function Logo() { return <span className="clout-logo official-logo portal-official-logo"><img src="/manus-storage/0f3d458e-3e78-4482-b68e-ad76925226a8_58f87301.png" alt="Clout Digital Experience" /></span>; }
 
 function Chart({ data, color = "#a55eff" }: { data: typeof spendData; color?: string }) {
   return <ResponsiveContainer width="100%" height={150}><AreaChart data={data} margin={{ top: 8, right: 0, left: -20, bottom: 0 }}><defs><linearGradient id={`fill-${color.replace("#", "")}`} x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity={.52} /><stop offset="100%" stopColor={color} stopOpacity={0} /></linearGradient></defs><XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#9d91bb", fontSize: 10 }} /><Tooltip cursor={{ stroke: "rgba(184,137,255,.22)" }} contentStyle={{ background: "#161124", border: "1px solid #574070", borderRadius: 0, color: "#f5f0ff", fontSize: 11 }} /><Area type="monotone" dataKey="value" stroke={color} strokeWidth={2.5} fill={`url(#fill-${color.replace("#", "")})`} /></AreaChart></ResponsiveContainer>;
