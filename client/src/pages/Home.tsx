@@ -78,7 +78,7 @@ export default function Home() {
         <nav className="after-nav container">
           <a href="#top" aria-label="Clout home"><Logo /></a>
           <div className="after-nav-links"><a href="#discover">Discover</a><a href="#shows">Shows</a><a href="#vip">VIP access</a><a href="#membership">Membership</a></div>
-          <div className="after-nav-actions"><a href="/night">My night</a><a href="/talent">Talent</a><a className="after-nav-join" href="#membership">Join Clout <ArrowRight size={13} /></a></div>
+          <div className="after-nav-actions"><a href="/login">Member login</a><a href="/night">My night</a><a href="/talent">Talent</a><a className="after-nav-join" href="#membership">Join Clout <ArrowRight size={13} /></a></div>
         </nav>
         <div className="container after-hero-layout">
           <div className="after-hero-copy">
