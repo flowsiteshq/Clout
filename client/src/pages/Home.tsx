@@ -21,10 +21,10 @@ import {
 
 const logo = "/manus-storage/0f3d458e-3e78-4482-b68e-ad76925226a8_58f87301.png";
 const media = {
-  hero: "/manus-storage/clout-after-dark-hero-web_71f28b32.jpg",
-  show: "/manus-storage/clout-vip-show-web_835e8ea2.jpg",
-  vip: "/manus-storage/clout-latina-vip-web_d2f78adf.jpg",
-  performers: "/manus-storage/clout-performer-profile-web_6cb77d38.jpg",
+  hero: "/manus-storage/clout-exotic-hero-web_995980bb.jpg",
+  show: "/manus-storage/clout-exotic-show-web_4febcf71.jpg",
+  vip: "/manus-storage/clout-latina-lounge-web_65ae15de.jpg",
+  performers: "/manus-storage/clout-exotic-profile-web_1021dad3.jpg",
   city: "/manus-storage/clout-houston-destination-web_4344a466.jpg",
 };
 
