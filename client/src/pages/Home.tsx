@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 const media = {
-  hero: "/manus-storage/clout-ai-night_4a3107ad.jpg",
+  hero: "/manus-storage/clout-ai-night-black-led_c80b9c40.jpg",
   creator: "/manus-storage/clout-ai-creator_b2618bde.jpg",
   venue: "/manus-storage/clout-ai-venue_f12b8d67.jpg",
 };
