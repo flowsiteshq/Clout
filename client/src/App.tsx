@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
 import JoinClout from "./pages/JoinClout";
 import NotFound from "./pages/NotFound";
 
@@ -21,6 +22,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
       <Route path="/night"><Suspense fallback={<PortalLoading />}><NightDashboard /></Suspense></Route>
       <Route path="/talent"><Suspense fallback={<PortalLoading />}><TalentPortal /></Suspense></Route>
       <Route path="/partner"><Suspense fallback={<PortalLoading />}><PartnerPortal /></Suspense></Route>
