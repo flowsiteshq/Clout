@@ -19,13 +19,13 @@ import {
   Zap,
 } from "lucide-react";
 
-const logo = "/manus-storage/0f3d458e-3e78-4482-b68e-ad76925226a8_58f87301.png";
+const logo = "";
 const media = {
-  hero: "/manus-storage/clout-exotic-hero-web_995980bb.jpg",
-  show: "/manus-storage/clout-exotic-show-web_4febcf71.jpg",
-  vip: "/manus-storage/clout-latina-lounge-web_65ae15de.jpg",
-  performers: "/manus-storage/clout-exotic-profile-web_1021dad3.jpg",
-  city: "/manus-storage/clout-houston-destination-web_4344a466.jpg",
+  hero: "https://images.unsplash.com/photo-1571266028243-d220c9b3b157?auto=format&fit=crop&w=1800&q=85",
+  show: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1100&q=85",
+  vip: "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1100&q=85",
+  performers: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1100&q=85",
+  city: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1100&q=85",
 };
 
 const accessCards = [
@@ -44,7 +44,7 @@ const plans = [
 ];
 
 function Logo({ small = false }: { small?: boolean }) {
-  return <img className={small ? "after-logo after-logo-small" : "after-logo"} src={logo} alt="Clout Digital Experience" />;
+  return <span className={small ? "clout-wordmark clout-wordmark-small" : "clout-wordmark"}><Crown aria-hidden="true" size={small ? 22 : 29} strokeWidth={1.7} /><span>CLOUT</span></span>;
 }
 
 function RequestModal({ subject, onClose }: { subject: string; onClose: () => void }) {
@@ -83,10 +83,10 @@ export default function Home() {
         <div className="container after-hero-layout">
           <div className="after-hero-copy">
             <p className="after-kicker"><span /> HOUSTON, TX · AFTER DARK</p>
-            <h1>The city<br /><em>after dark.</em></h1>
-            <p className="after-hero-lede">A new access layer for people, premium nightlife, shows, and adult-entertainment venues.</p>
-            <p className="after-hero-description">Find your room. Meet the energy. Keep every part of the night—your crew, your favorites, your access—in one place.</p>
-            <div className="after-hero-buttons"><a className="after-gold-cta" href="#discover">Explore tonight <ArrowRight size={15} /></a><button className="after-ghost-cta" onClick={() => openRequest("a curated Clout night")}><CirclePlay size={17} /> How Clout works</button></div>
+            <h1>Bolder<br /><em>nightlife.</em></h1>
+            <p className="after-hero-lede">VIP experiences. Elite connections. Unforgettable nights.</p>
+            <p className="after-hero-description">People. Events. Access. Influence. Discover premium nightlife, curated experiences, and a community that moves differently.</p>
+            <div className="after-hero-buttons"><a className="after-gold-cta" href="#discover">Join the movement <ArrowRight size={15} /></a><button className="after-ghost-cta" onClick={() => openRequest("a curated Clout night")}><CirclePlay size={17} /> How Clout works</button></div>
           </div>
           <aside className="after-hero-card">
             <div className="after-card-top"><span><i /> TONIGHT'S SIGNAL</span><button onClick={() => toggleSaved("Tonight's Signal")} aria-label="Save tonight's signal"><Heart size={16} fill={saved.includes("Tonight's Signal") ? "currentColor" : "none"} /></button></div>
@@ -119,7 +119,7 @@ export default function Home() {
       </section>
 
       <section className="after-membership" id="membership">
-        <div className="container"><div className="after-membership-heading"><div><p className="after-kicker"><span /> YOUR ACCESS, ELEVATED</p><h2>There’s a<br /><em>level for that.</em></h2></div><div><p>Membership keeps the right experiences closer. Every tier is subject to each participating venue’s availability and access rules.</p><span><ShieldCheck size={14} /> Booking requests never show public costs.</span></div></div>
+        <div className="container"><div className="after-membership-heading"><div><p className="after-kicker"><span /> YOUR ACCESS, ELEVATED</p><h2>Choose your<br /><em>Clout.</em></h2></div><div><p>Membership keeps the right experiences closer. Every tier is subject to each participating venue’s availability and access rules.</p><span><ShieldCheck size={14} /> Booking requests never show public costs.</span></div></div>
         <div className="after-tier-line">{plans.map(plan => <article className={`after-tier ${plan.tone} ${selectedPlan === plan.name ? "selected" : ""}`} key={plan.name}><div className="after-tier-top"><span>LEVEL {plan.level}</span><Diamond size={15} /></div><h3>{plan.name} <b>{plan.price}<small>{plan.price === "Free" ? "" : " / month"}</small></b></h3><ul>{plan.benefits.map(benefit => <li key={benefit}><Check size={12} /> {benefit}</li>)}</ul><button onClick={() => setSelectedPlan(plan.name)}>{selectedPlan === plan.name ? "Your selection" : "Explore this level"} <ArrowRight size={14} /></button></article>)}</div>
         <div className="after-tier-selection"><span><Zap size={15} /> <b>{selectedPlan}</b> is selected for exploration.</span><button onClick={() => openRequest(`${selectedPlan} membership`)}>Ask about this level <ArrowRight size={14} /></button></div></div>
       </section>
