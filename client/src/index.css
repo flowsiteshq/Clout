@@ -120,3 +120,17 @@
 .after-tier button{border-color:rgba(217,174,88,.55);color:#f1d18e}
 .after-access-card img,.after-showcase-photo img,.after-person-visual img,.after-places>img,.after-final>img{filter:saturate(1.06) contrast(1.06)}
 @media(max-width:700px){.clout-wordmark{font-size:24px;gap:7px}.clout-wordmark svg{width:22px}.after-hero{min-height:0}.after-hero-copy h1{font-size:clamp(54px,13vw,86px)}}
+
+/* CLOUT standalone member login */
+.clout-login-page{position:relative;isolation:isolate;min-height:100vh;background:#080711;color:#f7f0e5;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.clout-login-art{position:absolute;inset:0;z-index:-2;background:url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1800&q=85') center/cover no-repeat;filter:saturate(1.1)}
+.clout-login-overlay{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#07050eea,#0807119e,#07050eea),linear-gradient(0deg,#07050efa,#190c3199)}
+.clout-login-nav{width:min(1200px,calc(100% - 40px));padding:30px 0;display:flex;justify-content:space-between;align-items:center}
+.clout-login-nav a{display:inline-flex;align-items:center;gap:9px;color:#f4eadc;text-decoration:none;font-size:13px}
+.clout-login-nav .clout-login-brand{color:#eac477;font:28px Georgia,serif;letter-spacing:.17em}
+.clout-login-card{width:min(460px,calc(100% - 36px));margin:clamp(25px,6vh,80px) auto 70px;padding:45px 40px;border:1px solid #d9ae5866;background:linear-gradient(150deg,#171021f2,#080711f5);box-shadow:0 20px 100px #000a;text-align:center;backdrop-filter:blur(16px)}
+.clout-login-emblem{width:58px;height:58px;display:grid;place-items:center;margin:auto auto 20px;border:1px solid #d9ae5866;border-radius:50%;color:#eac477}
+.clout-login-eyebrow{font-size:10px;letter-spacing:.3em;color:#e1b96e}.clout-login-card h1{font:normal clamp(42px,5vw,58px) Georgia,serif;margin:12px 0}.clout-login-card h1 em{color:#e4bc73}.clout-login-subtitle{color:#bdb5c7;font-size:14px;margin:0 0 30px}
+.clout-login-card form{text-align:left}.clout-login-card label{display:flex;align-items:center;gap:9px;color:#dfd5e5;font-size:12px;margin:18px 0 9px}.clout-login-card input{width:100%;padding:15px;background:#100c19;border:1px solid #554663;color:#fff;border-radius:5px}.clout-login-card input:disabled{opacity:.55}.clout-login-card form button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:23px;padding:16px;background:linear-gradient(110deg,#b88c45,#f1d18a);border:0;color:#130d14;font-weight:700;border-radius:5px}.clout-login-card form button:disabled{opacity:.55;cursor:not-allowed}
+.clout-login-notice{display:flex;align-items:flex-start;gap:10px;text-align:left;margin-top:20px;padding:13px;border:1px solid #d9ae5840;color:#c8bed0;background:#d9ae580b;font-size:12px;line-height:1.6}.clout-login-notice svg{flex-shrink:0;color:#d9ae58}.clout-login-footer{font-size:13px;color:#bdb5c7;margin:25px 0 0}.clout-login-footer a{display:inline-flex;align-items:center;gap:4px;color:#eac477;text-decoration:none}.clout-login-bottom{margin:auto 0 20px;font-size:10px;letter-spacing:.18em;color:#a59cae;text-align:center}
+@media(max-width:520px){.clout-login-card{padding:35px 24px}.clout-login-nav .clout-login-brand{font-size:21px}}
