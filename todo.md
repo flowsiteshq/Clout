@@ -1,27 +1,23 @@
-# Clout Homepage Luxury Redesign Tracker
+# Clout Public Experience — Visual Direction Tracker
 
-## Delivered scope
+## Current revision
 
 | Area | Status | Delivered outcome |
 |---|---|---|
-| Scope boundary | Complete | Rebuilt the public homepage only; dashboards, application flow, backend, and existing routes remain intact. |
-| Brand system | Complete | Official gold-chrome Clout logo, obsidian foundation, rich purple / blue atmosphere, and restrained gold prestige details. |
-| Cinematic hero | Complete | Consumer-facing Houston nightlife narrative, gold Join Clout CTA, experience CTA, and feature strip. |
-| Experience discovery | Complete | Invitation-style cards for Violet Saturdays, The Penthouse, Dinner After Dark, and Exclusive VIP Events. |
-| Membership | Complete | All five provided tiers and prices; visible benefits are drawn from the documented plan and booking costs are not exposed publicly. |
-| Clout app | Complete | Two premium product mockups and documented feature preview; no unsupported app-store availability claim. |
-| Lifestyle & Houston | Complete | Editorial lifestyle section, three pillars, Houston destination treatment, and a confirmed-location availability notice rather than invented locations. |
-| Motion & accessibility | Complete | Lightweight, GPU-friendly hover motion with a reduced-motion-friendly visual baseline. |
-| Performance | Complete | Campaign imagery is compressed for web delivery; portals are code-split from the public homepage. |
-| Representation | Complete | Original Black-led adult luxury nightlife visuals are used throughout the redesigned homepage. |
-| Official logo | Complete | Official supplied Clout Digital Experience logo is integrated across the public site, portals, and application. |
+| Visual density | Complete | Rebuilt the public page as a layered editorial nightlife journey with an access rail, signal card, moving-text strip, overlapping media, invitation-style tiles, product storytelling, and elevated membership architecture. |
+| Venue fit | Complete | The homepage now clearly supports premium nightlife, shows, VIP experiences, and adult-entertainment venues through professional access and performer-discovery pathways. |
+| Representation | Complete | Added original Black- and Latina-led adult nightlife, show, VIP, and performer imagery, integrated across hero, experience cards, showcase, people, and closing sections. |
+| Consumer journey | Complete | Access-request controls open a clear modal and lead directly to the existing My Night planning experience; no public booking costs appear. |
+| Membership integrity | Complete | Preserved the five documented tiers, prices, and benefits, clearly presented as venue-dependent access exploration rather than a checkout. |
+| Location integrity | Complete | Preserved confirmation-first location messaging and avoids inventing live venue listings. |
+| Existing systems | Complete | Consumer, talent, partner, operations, employee application, and NDA routes remain intact. |
+| Performance | Complete | The four new campaign images were compressed for web delivery; dashboard charts remain code-split from the homepage. |
 
 ## Validation
 
-- [x] Type check and test suite pass (6 tests)
-- [x] Production build succeeds
+- [x] Type check, test suite, and production build pass (6 tests)
 - [x] Desktop public homepage visual review
 - [x] Mobile public homepage visual review
-- [x] Consumer, talent, partner, operations, and application routes render after the homepage redesign
-- [x] Homepage navigation targets and portal route links validated
-- [x] Final luxury-homepage checkpoint ready
+- [x] Access-request modal and My Night handoff validated
+- [x] Consumer, talent, partner, operations, and application routes render
+- [x] Save visual-density revision checkpoint
